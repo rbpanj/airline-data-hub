@@ -6,665 +6,950 @@
 <title>Airline Earnings Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root {
-  --bg:#0d0f14; --bg2:#13161d; --bg3:#1a1e28;
-  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12);
-  --text:#e8eaf0; --text2:#8b90a0; --text3:#555a6b;
-  --accent:#c8a96e; --accent2:#e8c98e;
-  --success:#3d9970; --success-bg:rgba(61,153,112,0.12);
-  --warning:#e8a030; --warning-bg:rgba(232,160,48,0.12);
-  --info:#4a90d9; --info-bg:rgba(74,144,217,0.12);
-  --danger:#d9534a; --danger-bg:rgba(217,83,74,0.12);
-  --radius:8px; --radius-lg:12px;
+:root{
+  --bg:#0d0f14;--bg2:#13161d;--bg3:#1a1e28;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#e8eaf0;--text2:#8b90a0;--text3:#555a6b;
+  --accent:#c8a96e;
+  --success:#3d9970;--success-bg:rgba(61,153,112,0.13);
+  --warning:#e8a030;--warning-bg:rgba(232,160,48,0.13);
+  --info:#4a90d9;--info-bg:rgba(74,144,217,0.13);
+  --danger:#d9534a;--danger-bg:rgba(217,83,74,0.13);
+  --r:8px;--rl:12px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6;min-height:100vh}
-
 /* HEADER */
-header{border-bottom:1px solid var(--border);background:rgba(13,15,20,0.95);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
-.header-inner{max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:56px}
-.wordmark{font-family:'Fraunces',serif;font-size:20px;font-weight:300;letter-spacing:-0.02em;color:var(--text);display:flex;align-items:center;gap:10px;text-decoration:none}
-.wordmark-icon{width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center}
-.wordmark-icon svg{width:16px;height:16px;stroke:#0d0f14;fill:none;stroke-width:2}
-.header-nav{display:flex;gap:4px}
-.nav-btn{padding:6px 14px;border-radius:var(--radius);border:1px solid transparent;background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all 0.15s}
-.nav-btn:hover{color:var(--text);background:var(--bg3)}
-.nav-btn.active{color:var(--accent);border-color:var(--border2);background:rgba(200,169,110,0.08)}
-.header-badge{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:0.04em}
-
+header{border-bottom:1px solid var(--border);background:rgba(13,15,20,0.96);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.hi{max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:56px}
+.wm{font-family:'Fraunces',serif;font-size:20px;font-weight:300;letter-spacing:-0.02em;color:var(--text);display:flex;align-items:center;gap:10px;text-decoration:none}
+.wm-icon{width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.wm-icon svg{width:16px;height:16px;stroke:#0d0f14;fill:none;stroke-width:2}
+.hnav{display:flex;gap:4px}
+.nb{padding:6px 14px;border-radius:var(--r);border:1px solid transparent;background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s}
+.nb:hover{color:var(--text);background:var(--bg3)}
+.nb.active{color:var(--accent);border-color:var(--border2);background:rgba(200,169,110,0.08)}
+.hbadge{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.04em}
 /* LAYOUT */
-.page{display:none}
-.page.active{display:block}
-.container{max-width:1200px;margin:0 auto;padding:2rem}
-
-/* PAGE HEADER */
-.page-title{font-family:'Fraunces',serif;font-size:28px;font-weight:300;letter-spacing:-0.03em;color:var(--text);margin-bottom:4px}
-.page-sub{font-size:13px;color:var(--text3);margin-bottom:1.75rem}
-
-/* SECTION LABEL */
-.section-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
-
-/* SUMMARY PILLS */
-.summary-row{display:flex;gap:10px;margin-bottom:1.75rem;flex-wrap:wrap}
-.summary-pill{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 18px;min-width:140px}
-.pill-label{font-size:11px;color:var(--text3);margin-bottom:4px;font-family:'DM Mono',monospace;letter-spacing:0.04em}
-.pill-value{font-size:22px;font-weight:500}
-.pill-sub{font-size:11px;color:var(--text3);margin-top:2px}
-
+.page{display:none}.page.active{display:block}
+.con{max-width:1200px;margin:0 auto;padding:2rem}
+.pt{font-family:'Fraunces',serif;font-size:28px;font-weight:300;letter-spacing:-.03em;margin-bottom:4px}
+.ps{font-size:13px;color:var(--text3);margin-bottom:1.75rem}
+.sl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.sl::after{content:'';flex:1;height:1px;background:var(--border)}
+/* PILLS */
+.srow{display:flex;gap:10px;margin-bottom:1.75rem;flex-wrap:wrap}
+.pill{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:12px 18px;min-width:140px}
+.plbl{font-size:11px;color:var(--text3);margin-bottom:4px;font-family:'DM Mono',monospace;letter-spacing:.04em}
+.pval{font-size:22px;font-weight:500}
+.psub{font-size:11px;color:var(--text3);margin-top:2px}
 /* CALENDAR */
-.cal-outer{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.75rem}
-.cal-month-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
-.cal-month-title{font-family:'Fraunces',serif;font-size:16px;font-weight:300;color:var(--text)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
-.cal-dow{padding:8px 4px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)}
-.cal-cell{min-height:88px;padding:8px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);cursor:default}
-.cal-cell.has-event{cursor:pointer}
-.cal-cell.has-event:hover{background:rgba(255,255,255,0.02)}
-.cal-cell:nth-child(7n){border-right:none}
-.cal-cell.other-month{opacity:0.25}
-.cal-cell.today{background:rgba(200,169,110,0.04)}
-.cal-cell.weekend{background:rgba(255,255,255,0.01)}
-.cal-day-num{font-family:'DM Mono',monospace;font-size:12px;color:var(--text3);margin-bottom:5px;font-weight:500}
-.cal-cell.today .cal-day-num{background:var(--accent);color:var(--bg);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px}
-.event-chip{display:flex;align-items:center;gap:5px;padding:3px 7px;border-radius:4px;margin-bottom:3px;font-size:11px;font-weight:500;cursor:pointer;transition:opacity 0.1s;font-family:'DM Sans',sans-serif}
-.event-chip:hover{opacity:0.8}
-.event-chip .edot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.chip-rep{background:var(--success-bg);color:var(--success)}
-.chip-tod{background:var(--warning-bg);color:var(--warning)}
-.chip-sch{background:var(--info-bg);color:var(--info)}
-.chip-tbd{background:rgba(255,255,255,0.04);color:var(--text3)}
-.chip-time{font-size:10px;color:var(--text3);padding-left:2px;margin-bottom:2px;font-family:'DM Mono',monospace}
-
+.cal-outer{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:1.75rem}
+.cal-mhdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
+.cal-mt{font-family:'Fraunces',serif;font-size:16px;font-weight:300}
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cdow{padding:8px 4px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)}
+.cc{min-height:88px;padding:8px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.cc.ev{cursor:pointer}.cc.ev:hover{background:rgba(255,255,255,.02)}
+.cc:nth-child(7n){border-right:none}
+.cc.om{opacity:.22}.cc.tod{background:rgba(200,169,110,.04)}.cc.wk{background:rgba(255,255,255,.01)}
+.cdn{font-family:'DM Mono',monospace;font-size:12px;color:var(--text3);margin-bottom:5px;font-weight:500}
+.cc.tod .cdn{background:var(--accent);color:var(--bg);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px}
+.chip{display:flex;align-items:center;gap:5px;padding:3px 7px;border-radius:4px;margin-bottom:3px;font-size:11px;font-weight:500;cursor:pointer}
+.chip:hover{opacity:.8}
+.chip .ed{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ch-rep{background:var(--success-bg);color:var(--success)}
+.ch-tod{background:var(--warning-bg);color:var(--warning)}
+.ch-sch{background:var(--info-bg);color:var(--info)}
+.ch-tbd{background:rgba(255,255,255,.04);color:var(--text3)}
+.ctime{font-size:10px;color:var(--text3);padding-left:2px;margin-bottom:2px;font-family:'DM Mono',monospace}
 /* CARRIER TABLE */
-.carrier-table{width:100%;border-collapse:collapse;margin-bottom:1.75rem}
-.carrier-table thead th{padding:8px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);font-weight:400}
-.carrier-table tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s}
-.carrier-table tbody tr:hover{background:var(--bg2)}
-.carrier-table tbody td{padding:10px 12px}
-.airline-badge-sm{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:#fff;letter-spacing:0.02em;flex-shrink:0;font-family:'DM Mono',monospace}
-.airline-name{font-size:13px;font-weight:500;color:var(--text)}
-.airline-ticker{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
-.status-badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.ctbl{width:100%;border-collapse:collapse;margin-bottom:1.75rem}
+.ctbl thead th{padding:8px 12px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);font-weight:400}
+.ctbl tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.ctbl tbody tr:hover{background:var(--bg2)}
+.ctbl tbody td{padding:10px 12px}
+.abadge{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:#fff;letter-spacing:.02em;flex-shrink:0;font-family:'DM Mono',monospace}
+.sb{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
 .sb-rep{background:var(--success-bg);color:var(--success)}
 .sb-tod{background:var(--warning-bg);color:var(--warning)}
 .sb-sch{background:var(--info-bg);color:var(--info)}
-.sb-tbd{background:rgba(255,255,255,0.04);color:var(--text3)}
-.ir-link{font-size:12px;color:var(--info);text-decoration:none;padding:4px 10px;border-radius:6px;border:1px solid rgba(74,144,217,0.2);transition:all 0.1s}
-.ir-link:hover{background:var(--info-bg)}
-
+.sb-tbd{background:rgba(255,255,255,.04);color:var(--text3)}
+.irlink{font-size:12px;color:var(--info);text-decoration:none;padding:4px 10px;border-radius:6px;border:1px solid rgba(74,144,217,.2);transition:all .1s}
+.irlink:hover{background:var(--info-bg)}
 /* LEGEND */
-.legend-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:1.25rem}
-.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)}
-.legend-swatch{width:10px;height:10px;border-radius:2px}
-
+.legrow{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:1.25rem}
+.legi{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)}
+.legs{width:10px;height:10px;border-radius:2px}
 /* COMPARISON */
-.carrier-toggles{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
-.carrier-toggle{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--radius);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;transition:all 0.12s}
-.carrier-toggle .tdot{width:8px;height:8px;border-radius:50%}
-.carrier-toggle.active{color:#fff}
-.table-scroll{overflow-x:auto;margin-bottom:1.75rem}
-.comp-table{width:100%;border-collapse:collapse;font-size:12.5px}
-.comp-table th{padding:8px 12px;text-align:left;font-weight:500;color:var(--text3);border-bottom:1px solid var(--border);background:var(--bg2);white-space:nowrap;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.04em}
-.comp-table th:first-child{position:sticky;left:0;z-index:3;background:var(--bg2)}
-.comp-table td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle;white-space:nowrap;color:var(--text)}
-.comp-table td:first-child{position:sticky;left:0;z-index:1;background:var(--bg);font-size:12px;color:var(--text2);font-family:'DM Mono',monospace}
-.comp-table tr:hover td{background:var(--bg2)}
-.comp-table tr:hover td:first-child{background:var(--bg2)}
-.group-row td{background:var(--bg3)!important;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);padding:6px 12px;border-top:1px solid var(--border)}
-.val-pos{color:var(--success)}
-.val-neg{color:var(--danger)}
-.val-est{font-size:10px;color:var(--text3)}
-
+.toggles{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
+.tog{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r);border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;transition:all .12s}
+.tog .tdot{width:8px;height:8px;border-radius:50%}
+.tog.on{color:#fff}
+/* QUARTER SELECTOR */
+.qsel{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
+.qbtn{padding:5px 12px;border-radius:var(--r);border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .12s}
+.qbtn:hover{color:var(--text);border-color:var(--border2)}
+.qbtn.active{background:rgba(200,169,110,.1);border-color:rgba(200,169,110,.3);color:var(--accent)}
+.tscroll{overflow-x:auto;margin-bottom:1.75rem}
+.ctable{width:100%;border-collapse:collapse;font-size:12.5px}
+.ctable th{padding:8px 12px;text-align:left;font-weight:500;color:var(--text3);border-bottom:1px solid var(--border);background:var(--bg2);white-space:nowrap;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em}
+.ctable th:first-child{position:sticky;left:0;z-index:3;background:var(--bg2)}
+.ctable td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle;white-space:nowrap;color:var(--text)}
+.ctable td:first-child{position:sticky;left:0;z-index:1;background:var(--bg);font-size:12px;color:var(--text2);font-family:'DM Mono',monospace}
+.ctable tr:hover td{background:var(--bg2)}
+.ctable tr:hover td:first-child{background:var(--bg2)}
+.grp td{background:var(--bg3)!important;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);padding:6px 12px;border-top:1px solid var(--border)}
+.vpos{color:var(--success)}.vneg{color:var(--danger)}.vest{font-size:10px;color:var(--text3)}
+.yoy{font-size:10px;color:var(--text3);margin-left:3px}
 /* TRENDS */
-.metric-selector{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
-.metric-btn{padding:5px 12px;border-radius:var(--radius);border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all 0.12s}
-.metric-btn:hover{color:var(--text);border-color:var(--border2)}
-.metric-btn.active{background:rgba(200,169,110,0.1);border-color:rgba(200,169,110,0.3);color:var(--accent)}
-.chart-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.25rem}
-.chart-heading{font-family:'Fraunces',serif;font-size:16px;font-weight:300;color:var(--text);margin-bottom:2px}
-.chart-sub-text{font-size:12px;color:var(--text3);margin-bottom:1rem;font-family:'DM Mono',monospace}
-.chart-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px}
-.cl-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2)}
-.cl-swatch{width:10px;height:10px;border-radius:2px}
-.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-
+.mbtn{padding:5px 12px;border-radius:var(--r);border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .12s}
+.mbtn:hover{color:var(--text);border-color:var(--border2)}
+.mbtn.active{background:rgba(200,169,110,.1);border-color:rgba(200,169,110,.3);color:var(--accent)}
+.cw{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;margin-bottom:1.25rem}
+.cht{font-family:'Fraunces',serif;font-size:16px;font-weight:300;margin-bottom:2px}
+.chs{font-size:12px;color:var(--text3);margin-bottom:1rem;font-family:'DM Mono',monospace}
+.chleg{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.cli{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2)}
+.cls{width:10px;height:10px;border-radius:2px}
+.mini2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 /* DRAWER */
-.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;backdrop-filter:blur(4px);align-items:flex-end;justify-content:center}
-.drawer-overlay.open{display:flex}
-.drawer{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg) var(--radius-lg) 0 0;width:100%;max-width:680px;padding:1.5rem;transform:translateY(100%);transition:transform 0.25s ease;max-height:80vh;overflow-y:auto}
-.drawer-overlay.open .drawer{transform:translateY(0)}
-.drawer-header{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem}
-.drawer-close{margin-left:auto;width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all 0.12s}
-.drawer-close:hover{background:var(--bg3);color:var(--text)}
-.drawer-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
-.drawer-stat{background:var(--bg3);border-radius:var(--radius);padding:10px 12px}
-.ds-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.06em}
-.ds-value{font-size:15px;font-weight:500;color:var(--text)}
-.drawer-links{display:flex;gap:8px;flex-wrap:wrap}
-.drawer-link{padding:7px 14px;border-radius:var(--radius);border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;text-decoration:none;transition:all 0.12s;cursor:pointer;font-family:'DM Sans',sans-serif}
-.drawer-link:hover{color:var(--text);background:var(--bg3)}
-.drawer-note{margin-top:1rem;padding:10px 14px;background:rgba(200,169,110,0.06);border-left:2px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;font-size:12px;color:var(--text2);line-height:1.5}
-
-/* FOOTER */
+.dov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;backdrop-filter:blur(4px);align-items:flex-end;justify-content:center}
+.dov.open{display:flex}
+.drw{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl) var(--rl) 0 0;width:100%;max-width:700px;padding:1.5rem;transform:translateY(100%);transition:transform .25s ease;max-height:82vh;overflow-y:auto}
+.dov.open .drw{transform:translateY(0)}
+.dhdr{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem}
+.dcl{margin-left:auto;width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.dcl:hover{background:var(--bg3);color:var(--text)}
+.dstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
+.dst{background:var(--bg3);border-radius:var(--r);padding:10px 12px}
+.dsl{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.06em}
+.dsv{font-size:15px;font-weight:500}
+.dlnks{display:flex;gap:8px;flex-wrap:wrap}
+.dlnk{padding:7px 14px;border-radius:var(--r);border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;text-decoration:none;transition:all .12s;cursor:pointer;font-family:'DM Sans',sans-serif}
+.dlnk:hover{color:var(--text);background:var(--bg3)}
+.dnote{margin-top:1rem;padding:10px 14px;background:rgba(200,169,110,.06);border-left:2px solid var(--accent);border-radius:0 var(--r) var(--r) 0;font-size:12px;color:var(--text2);line-height:1.5}
 footer{border-top:1px solid var(--border);margin-top:3rem;padding:1.5rem 2rem;text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
-
-/* RESPONSIVE */
 @media(max-width:640px){
-  .header-inner{padding:0 1rem}
-  .header-badge{display:none}
-  .container{padding:1.25rem 1rem}
-  .mini-grid{grid-template-columns:1fr}
-  .drawer-stats{grid-template-columns:repeat(2,1fr)}
-  .summary-row{gap:8px}
-  .summary-pill{min-width:120px;padding:10px 14px}
-  .cal-cell{min-height:64px;padding:5px}
-  .event-chip{font-size:10px;padding:2px 5px}
+  .hi{padding:0 1rem}.hbadge{display:none}.con{padding:1.25rem 1rem}
+  .mini2{grid-template-columns:1fr}.dstats{grid-template-columns:repeat(2,1fr)}
+  .srow{gap:8px}.pill{min-width:120px;padding:10px 14px}
+  .cc{min-height:64px;padding:5px}.chip{font-size:10px;padding:2px 5px}
 }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-inner">
-    <a class="wordmark" href="#">
-      <div class="wordmark-icon">
-        <svg viewBox="0 0 24 24"><path d="M22 16.5L12 3 2 16.5"/><path d="M2 16.5h20"/><circle cx="12" cy="19" r="2"/></svg>
-      </div>
+  <div class="hi">
+    <a class="wm" href="#">
+      <div class="wm-icon"><svg viewBox="0 0 24 24"><path d="M22 16.5L12 3 2 16.5"/><path d="M2 16.5h20"/><circle cx="12" cy="19" r="2"/></svg></div>
       Airline Earnings Hub
     </a>
-    <nav class="header-nav">
-      <button class="nav-btn active" onclick="showPage('calendar',this)">Calendar</button>
-      <button class="nav-btn" onclick="showPage('comparison',this)">Q1 2026</button>
-      <button class="nav-btn" onclick="showPage('trends',this)">Trends</button>
+    <nav class="hnav">
+      <button class="nb active" onclick="showPage('calendar',this)">Calendar</button>
+      <button class="nb" onclick="showPage('comparison',this)">Comparison</button>
+      <button class="nb" onclick="showPage('trends',this)">Trends</button>
     </nav>
-    <div class="header-badge">Q1 2026 SEASON</div>
+    <div class="hbadge">Q1 2026 SEASON</div>
   </div>
 </header>
 
-<!-- ═══════════════ CALENDAR ═══════════════ -->
+<!-- ═══════════ CALENDAR ═══════════ -->
 <div id="page-calendar" class="page active">
-  <div class="container">
-    <div class="page-title">Earnings calendar</div>
-    <div class="page-sub">Q1 2026 season · dates confirmed against carrier IR sites · April 2026</div>
+<div class="con">
+  <div class="pt">Earnings calendar</div>
+  <div class="ps">Q1 2026 season · all times Eastern · dates confirmed against carrier IR sites</div>
 
-    <div class="summary-row">
-      <div class="summary-pill"><div class="pill-label">CARRIERS TRACKED</div><div class="pill-value" style="color:var(--accent)">8</div><div class="pill-sub">this season</div></div>
-      <div class="summary-pill"><div class="pill-label">REPORTED</div><div class="pill-value" style="color:var(--success)">2</div><div class="pill-sub">DAL · ALK</div></div>
-      <div class="summary-pill"><div class="pill-label">THIS WEEK</div><div class="pill-value" style="color:var(--warning)">3</div><div class="pill-sub">UAL · LUV · AAL</div></div>
-      <div class="summary-pill"><div class="pill-label">NEXT REPORT</div><div class="pill-value" style="font-size:16px;margin-top:2px;color:var(--info)">Apr 22</div><div class="pill-sub">United Airlines</div></div>
-    </div>
-
-    <div class="section-label">April 2026</div>
-    <div class="cal-outer">
-      <div class="cal-month-header">
-        <div class="cal-month-title">April 2026</div>
-      </div>
-      <div class="cal-grid">
-        <div class="cal-dow">Sun</div><div class="cal-dow">Mon</div><div class="cal-dow">Tue</div>
-        <div class="cal-dow">Wed</div><div class="cal-dow">Thu</div><div class="cal-dow">Fri</div><div class="cal-dow">Sat</div>
-
-        <div class="cal-cell weekend other-month"><div class="cal-day-num">30</div></div>
-        <div class="cal-cell other-month"><div class="cal-day-num">31</div></div>
-        <div class="cal-cell"><div class="cal-day-num">1</div></div>
-        <div class="cal-cell"><div class="cal-day-num">2</div></div>
-        <div class="cal-cell"><div class="cal-day-num">3</div></div>
-        <div class="cal-cell"><div class="cal-day-num">4</div></div>
-        <div class="cal-cell weekend"><div class="cal-day-num">5</div></div>
-
-        <div class="cal-cell weekend"><div class="cal-day-num">6</div></div>
-        <div class="cal-cell"><div class="cal-day-num">7</div></div>
-        <div class="cal-cell has-event" onclick="openDrawer('DAL')">
-          <div class="cal-day-num">8</div>
-          <div class="event-chip chip-rep"><span class="edot" style="background:#9B1C2A"></span>DAL</div>
-          <div class="chip-time">10:00 AM EDT</div>
-        </div>
-        <div class="cal-cell"><div class="cal-day-num">9</div></div>
-        <div class="cal-cell"><div class="cal-day-num">10</div></div>
-        <div class="cal-cell"><div class="cal-day-num">11</div></div>
-        <div class="cal-cell weekend"><div class="cal-day-num">12</div></div>
-
-        <div class="cal-cell weekend"><div class="cal-day-num">13</div></div>
-        <div class="cal-cell"><div class="cal-day-num">14</div></div>
-        <div class="cal-cell"><div class="cal-day-num">15</div></div>
-        <div class="cal-cell"><div class="cal-day-num">16</div></div>
-        <div class="cal-cell"><div class="cal-day-num">17</div></div>
-        <div class="cal-cell"><div class="cal-day-num">18</div></div>
-        <div class="cal-cell weekend"><div class="cal-day-num">19</div></div>
-
-        <div class="cal-cell weekend has-event" onclick="openDrawer('ALK')">
-          <div class="cal-day-num">20</div>
-          <div class="event-chip chip-rep"><span class="edot" style="background:#006B5B"></span>ALK results</div>
-          <div class="chip-time">after close</div>
-        </div>
-        <div class="cal-cell today has-event" onclick="openDrawer('ALK')">
-          <div class="cal-day-num">21</div>
-          <div class="event-chip chip-tod"><span class="edot" style="background:#006B5B"></span>ALK call</div>
-          <div class="chip-time">11:30 AM EDT</div>
-        </div>
-        <div class="cal-cell has-event" onclick="openDrawer('UAL')">
-          <div class="cal-day-num">22</div>
-          <div class="event-chip chip-sch"><span class="edot" style="background:#003580"></span>UAL</div>
-          <div class="chip-time">10:30 AM EDT</div>
-        </div>
-        <div class="cal-cell has-event">
-          <div class="cal-day-num">23</div>
-          <div class="event-chip chip-sch" onclick="openDrawer('LUV')"><span class="edot" style="background:#E35205"></span>LUV</div>
-          <div class="chip-time">10:00 AM EDT</div>
-          <div class="event-chip chip-sch" onclick="openDrawer('AAL')"><span class="edot" style="background:#0066CC"></span>AAL</div>
-          <div class="chip-time">7:30 AM CDT</div>
-        </div>
-        <div class="cal-cell"><div class="cal-day-num">24</div></div>
-        <div class="cal-cell"><div class="cal-day-num">25</div></div>
-        <div class="cal-cell weekend"><div class="cal-day-num">26</div></div>
-
-        <div class="cal-cell weekend"><div class="cal-day-num">27</div></div>
-        <div class="cal-cell"><div class="cal-day-num">28</div></div>
-        <div class="cal-cell"><div class="cal-day-num">29</div></div>
-        <div class="cal-cell"><div class="cal-day-num">30</div></div>
-        <div class="cal-cell other-month"><div class="cal-day-num">1</div></div>
-        <div class="cal-cell other-month"><div class="cal-day-num">2</div></div>
-        <div class="cal-cell weekend other-month"><div class="cal-day-num">3</div></div>
-      </div>
-    </div>
-
-    <div class="legend-row">
-      <div class="legend-item"><div class="legend-swatch" style="background:var(--success-bg);border:1px solid var(--success)"></div>Reported</div>
-      <div class="legend-item"><div class="legend-swatch" style="background:var(--warning-bg);border:1px solid var(--warning)"></div>Reporting today</div>
-      <div class="legend-item"><div class="legend-swatch" style="background:var(--info-bg);border:1px solid var(--info)"></div>Scheduled</div>
-      <div class="legend-item"><div class="legend-swatch" style="background:rgba(255,255,255,0.04);border:1px solid var(--border)"></div>Date TBD</div>
-    </div>
-
-    <div class="section-label">All carriers · Q1 2026</div>
-    <table class="carrier-table">
-      <thead><tr><th>Carrier</th><th>Results release</th><th>Call date &amp; time</th><th>Status</th><th>Links</th></tr></thead>
-      <tbody id="carrier-table-body"></tbody>
-    </table>
+  <div class="srow">
+    <div class="pill"><div class="plbl">CARRIERS TRACKED</div><div class="pval" style="color:var(--accent)">11</div><div class="psub">this season</div></div>
+    <div class="pill"><div class="plbl">REPORTED</div><div class="pval" style="color:var(--success)">3</div><div class="psub">DAL · ALK · UAL</div></div>
+    <div class="pill"><div class="plbl">THIS WEEK</div><div class="pval" style="color:var(--warning)">2</div><div class="psub">LUV · AAL tomorrow</div></div>
+    <div class="pill"><div class="plbl">NEXT REPORTS</div><div class="pval" style="font-size:16px;margin-top:2px;color:var(--info)">Apr 23</div><div class="psub">LUV · AAL</div></div>
   </div>
+
+  <div class="sl">April 2026</div>
+  <div class="cal-outer">
+    <div class="cal-mhdr"><div class="cal-mt">April 2026</div></div>
+    <div class="cgrid">
+      <!-- Day-of-week headers: April 1 2026 = Wednesday -->
+      <div class="cdow">Sun</div><div class="cdow">Mon</div><div class="cdow">Tue</div>
+      <div class="cdow">Wed</div><div class="cdow">Thu</div><div class="cdow">Fri</div><div class="cdow">Sat</div>
+
+      <!-- Week 1: Mar 29–Apr 4. Apr 1 = Wed so offset = 3 (Sun Mon Tue blank) -->
+      <div class="cc wk om"><div class="cdn">30</div></div><!-- Sun Mar 30 -->
+      <div class="cc om"><div class="cdn">31</div></div><!-- Mon Mar 31 -->
+      <div class="cc om"><div class="cdn">1</div></div><!-- Tue Apr 1 — blank, April starts Wed -->
+      <div class="cc"><div class="cdn">1</div></div><!-- Wed Apr 1 -->
+      <div class="cc"><div class="cdn">2</div></div>
+      <div class="cc"><div class="cdn">3</div></div>
+      <div class="cc wk"><div class="cdn">4</div></div>
+
+      <!-- Week 2: Apr 5–11 -->
+      <div class="cc wk"><div class="cdn">5</div></div>
+      <div class="cc"><div class="cdn">6</div></div>
+      <div class="cc"><div class="cdn">7</div></div>
+      <div class="cc ev" onclick="openDrawer('DAL')">
+        <div class="cdn">8</div>
+        <div class="chip ch-rep"><span class="ed" style="background:#9B1C2A"></span>DAL</div>
+        <div class="ctime">10:00 AM ET</div>
+      </div>
+      <div class="cc"><div class="cdn">9</div></div>
+      <div class="cc"><div class="cdn">10</div></div>
+      <div class="cc wk"><div class="cdn">11</div></div>
+
+      <!-- Week 3: Apr 12–18 -->
+      <div class="cc wk"><div class="cdn">12</div></div>
+      <div class="cc"><div class="cdn">13</div></div>
+      <div class="cc"><div class="cdn">14</div></div>
+      <div class="cc"><div class="cdn">15</div></div>
+      <div class="cc"><div class="cdn">16</div></div>
+      <div class="cc"><div class="cdn">17</div></div>
+      <div class="cc wk"><div class="cdn">18</div></div>
+
+      <!-- Week 4: Apr 19–25. Today = Apr 22 (Wed) -->
+      <div class="cc wk"><div class="cdn">19</div></div>
+      <div class="cc ev" onclick="openDrawer('ALK')">
+        <div class="cdn">20</div>
+        <div class="chip ch-rep"><span class="ed" style="background:#006B5B"></span>ALK results</div>
+        <div class="ctime">after close</div>
+      </div>
+      <div class="cc ev" onclick="openDrawer('ALK')">
+        <div class="cdn">21</div>
+        <div class="chip ch-rep"><span class="ed" style="background:#006B5B"></span>ALK call</div>
+        <div class="ctime">11:30 AM ET</div>
+        <div class="chip ch-rep" style="margin-top:2px"><span class="ed" style="background:#003580"></span>UAL results</div>
+        <div class="ctime">after close</div>
+      </div>
+      <div class="cc tod ev" onclick="openDrawer('UAL')">
+        <div class="cdn">22</div>
+        <div class="chip ch-rep"><span class="ed" style="background:#003580"></span>UAL call</div>
+        <div class="ctime">10:30 AM ET</div>
+      </div>
+      <div class="cc ev">
+        <div class="cdn">23</div>
+        <div class="chip ch-sch" onclick="openDrawer('LUV')"><span class="ed" style="background:#E35205"></span>LUV</div>
+        <div class="ctime">10:00 AM ET</div>
+        <div class="chip ch-sch" style="margin-top:2px" onclick="openDrawer('AAL')"><span class="ed" style="background:#0066CC"></span>AAL</div>
+        <div class="ctime">8:30 AM ET</div>
+      </div>
+      <div class="cc"><div class="cdn">24</div></div>
+      <div class="cc wk"><div class="cdn">25</div></div>
+
+      <!-- Week 5: Apr 26–30 -->
+      <div class="cc wk"><div class="cdn">26</div></div>
+      <div class="cc"><div class="cdn">27</div></div>
+      <div class="cc ev" onclick="openDrawer('JBLU')">
+        <div class="cdn">28</div>
+        <div class="chip ch-sch"><span class="ed" style="background:#003876"></span>JBLU</div>
+        <div class="ctime">after close</div>
+      </div>
+      <div class="cc"><div class="cdn">29</div></div>
+      <div class="cc ev" onclick="openDrawer('ULCC')">
+        <div class="cdn">30</div>
+        <div class="chip ch-sch"><span class="ed" style="background:#3a7d14"></span>ULCC</div>
+        <div class="ctime">TBD</div>
+      </div>
+      <div class="cc om"><div class="cdn">1</div></div>
+      <div class="cc wk om"><div class="cdn">2</div></div>
+    </div>
+  </div>
+
+  <div class="legrow">
+    <div class="legi"><div class="legs" style="background:var(--success-bg);border:1px solid var(--success)"></div>Reported</div>
+    <div class="legi"><div class="legs" style="background:var(--warning-bg);border:1px solid var(--warning)"></div>Reporting today</div>
+    <div class="legi"><div class="legs" style="background:var(--info-bg);border:1px solid var(--info)"></div>Scheduled</div>
+    <div class="legi"><div class="legs" style="background:rgba(255,255,255,.04);border:1px solid var(--border)"></div>Date TBD</div>
+    <div class="legi" style="margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">All times Eastern (ET)</div>
+  </div>
+
+  <div class="sl">All carriers · Q1 2026</div>
+  <table class="ctbl">
+    <thead><tr><th>Carrier</th><th>Results release</th><th>Call date &amp; time (ET)</th><th>Status</th><th>Links</th></tr></thead>
+    <tbody id="cal-tbody"></tbody>
+  </table>
+</div>
 </div>
 
-<!-- ═══════════════ COMPARISON ═══════════════ -->
+<!-- ═══════════ COMPARISON ═══════════ -->
 <div id="page-comparison" class="page">
-  <div class="container">
-    <div class="page-title">Q1 2026 comparison</div>
-    <div class="page-sub">Side-by-side results · regional revenue breakdowns · reported and estimated</div>
-    <div class="section-label">Select carriers</div>
-    <div class="carrier-toggles" id="comp-toggles"></div>
-    <div class="legend-row">
-      <div class="legend-item"><div class="legend-swatch" style="background:#3266AD"></div>Domestic</div>
-      <div class="legend-item"><div class="legend-swatch" style="background:#E07A2F"></div>Atlantic</div>
-      <div class="legend-item"><div class="legend-swatch" style="background:#2E9E5B"></div>Latin America</div>
-      <div class="legend-item"><div class="legend-swatch" style="background:#9B59B6"></div>Pacific</div>
-      <div class="legend-item"><div class="legend-swatch" style="background:#555a6b"></div>Other / loyalty</div>
-    </div>
-    <div class="section-label">Results</div>
-    <div class="table-scroll">
-      <table class="comp-table"><thead><tr id="comp-thead"></tr></thead><tbody id="comp-tbody"></tbody></table>
-    </div>
+<div class="con">
+  <div class="pt">Earnings comparison</div>
+  <div class="ps">Side-by-side results · regional breakdowns · select carriers and quarter</div>
+
+  <div class="sl">Quarter</div>
+  <div class="qsel" id="qsel"></div>
+
+  <div class="sl">Carriers</div>
+  <div class="toggles" id="comp-toggles"></div>
+
+  <div class="legrow">
+    <div class="legi"><div class="legs" style="background:#3266AD"></div>Domestic</div>
+    <div class="legi"><div class="legs" style="background:#E07A2F"></div>Atlantic</div>
+    <div class="legi"><div class="legs" style="background:#2E9E5B"></div>Latin America</div>
+    <div class="legi"><div class="legs" style="background:#9B59B6"></div>Pacific</div>
+    <div class="legi"><div class="legs" style="background:#555a6b"></div>Other/loyalty</div>
+  </div>
+
+  <div class="sl">Results</div>
+  <div class="tscroll">
+    <table class="ctable"><thead><tr id="comp-thead"></tr></thead><tbody id="comp-tbody"></tbody></table>
   </div>
 </div>
+</div>
 
-<!-- ═══════════════ TRENDS ═══════════════ -->
+<!-- ═══════════ TRENDS ═══════════ -->
 <div id="page-trends" class="page">
-  <div class="container">
-    <div class="page-title">Historical trends</div>
-    <div class="page-sub">6-quarter view · Q4 2024 – Q1 2026 · sourced from SEC 10-Q / 8-K filings</div>
-    <div class="section-label">Metric</div>
-    <div class="metric-selector">
-      <button class="metric-btn active" onclick="setMetric('rev',this)">Revenue ($B)</button>
-      <button class="metric-btn" onclick="setMetric('eps',this)">Adj. EPS</button>
-      <button class="metric-btn" onclick="setMetric('rasm',this)">RASM (¢)</button>
-      <button class="metric-btn" onclick="setMetric('casmex',this)">CASM-ex (¢)</button>
+<div class="con">
+  <div class="pt">Historical trends</div>
+  <div class="ps">6-quarter view · Q4 2024 – Q1 2026 · sourced from SEC 10-Q / 8-K filings</div>
+
+  <div class="sl">Metric</div>
+  <div class="toggles" style="margin-bottom:1.25rem" id="metric-sel"></div>
+
+  <div class="sl">Carriers</div>
+  <div class="toggles" id="trend-toggles"></div>
+
+  <div class="cw">
+    <div class="cht" id="tr-title">Quarterly revenue ($B)</div>
+    <div class="chs" id="tr-sub">Total adjusted revenue · Q4 2024 – Q1 2026</div>
+    <div class="chleg" id="tr-legend"></div>
+    <div style="position:relative;height:300px">
+      <canvas id="mainChart" role="img" aria-label="Multi-airline trend chart">Historical airline financial data.</canvas>
     </div>
-    <div class="chart-wrap">
-      <div class="chart-heading" id="trend-title">Quarterly revenue ($B)</div>
-      <div class="chart-sub-text" id="trend-sub">Total adjusted revenue · all carriers · Q4 2024 – Q1 2026</div>
-      <div class="chart-legend" id="trend-legend"></div>
-      <div style="position:relative;height:320px">
-        <canvas id="mainTrendChart" role="img" aria-label="Multi-airline trend chart">Historical airline financial data Q4 2024 through Q1 2026.</canvas>
+  </div>
+
+  <div class="sl">Individual carriers</div>
+  <div class="mini2" id="mini-grid"></div>
+
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:.75rem 1rem;font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1rem">
+    LUV and AAL reporting Apr 23 · JBLU Apr 28 · ULCC Apr 30 · Spirit Airlines in bankruptcy restructuring · Dashed = estimated/pending · Data from SEC 10-Q/8-K
+  </div>
+</div>
+</div>
+
+<!-- ═══════════ DRAWER ═══════════ -->
+<div class="dov" id="dov" onclick="handleDOvClick(event)">
+  <div class="drw">
+    <div class="dhdr">
+      <div class="abadge" id="d-badge"></div>
+      <div>
+        <div style="font-size:16px;font-weight:500" id="d-name"></div>
+        <div style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace" id="d-call"></div>
       </div>
+      <button class="dcl" onclick="closeDrw()">×</button>
     </div>
-    <div class="section-label">Individual carrier view</div>
-    <div class="mini-grid" id="mini-charts-grid"></div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem;font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1rem">
-      UAL Q1 2026 results pending (Apr 21 close) · LUV and AAL reporting Apr 23 · Dashed lines = estimated / pending · Data from SEC 10-Q and 8-K filings
-    </div>
+    <div class="dstats" id="d-stats"></div>
+    <div class="dlnks" id="d-links"></div>
+    <div class="dnote" id="d-note"></div>
   </div>
 </div>
 
-<!-- ═══════════════ DRAWER ═══════════════ -->
-<div class="drawer-overlay" id="drawer-overlay" onclick="handleOverlayClick(event)">
-  <div class="drawer">
-    <div class="drawer-header">
-      <div class="airline-badge-sm" id="d-badge"></div>
-      <div><div style="font-size:16px;font-weight:500;color:var(--text)" id="d-name"></div><div style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace" id="d-call"></div></div>
-      <button class="drawer-close" onclick="closeDrawer()">×</button>
-    </div>
-    <div class="drawer-stats" id="d-stats"></div>
-    <div class="drawer-links" id="d-links"></div>
-    <div class="drawer-note" id="d-note"></div>
-  </div>
-</div>
-
-<footer>Airline Earnings Hub · Data sourced from SEC EDGAR 10-Q / 8-K filings and carrier IR sites · Not investment advice · Built with Chart.js</footer>
+<footer>Airline Earnings Hub · Data from SEC EDGAR 10-Q/8-K filings and carrier IR sites · All times Eastern · Not investment advice</footer>
 
 <script>
-// ════════════ DATA ════════════
-const CARRIERS={
-  DAL:{name:'Delta Air Lines',color:'#9B1C2A',exchange:'NYSE'},
-  UAL:{name:'United Airlines',color:'#003580',exchange:'NASDAQ'},
-  AAL:{name:'American Airlines',color:'#0066CC',exchange:'NASDAQ'},
-  ALK:{name:'Alaska Air Group',color:'#006B5B',exchange:'NYSE'},
-  LUV:{name:'Southwest Airlines',color:'#E35205',exchange:'NYSE'},
-  JBLU:{name:'JetBlue Airways',color:'#003876',exchange:'NASDAQ'},
-  ULCC:{name:'Frontier Group',color:'#3a7d14',exchange:'NASDAQ'},
-  SKYW:{name:'SkyWest Airlines',color:'#014A8F',exchange:'NASDAQ'},
+// ══════════════════════════════════════
+// MASTER DATA
+// ══════════════════════════════════════
+const C = {
+  DAL: {name:'Delta Air Lines',    color:'#9B1C2A', ex:'NYSE'},
+  UAL: {name:'United Airlines',    color:'#1a4f9c', ex:'NASDAQ'},
+  AAL: {name:'American Airlines',  color:'#0066CC', ex:'NASDAQ'},
+  ALK: {name:'Alaska Air Group',   color:'#006B5B', ex:'NYSE'},
+  LUV: {name:'Southwest Airlines', color:'#E35205', ex:'NYSE'},
+  JBLU:{name:'JetBlue Airways',    color:'#003876', ex:'NASDAQ'},
+  ULCC:{name:'Frontier Airlines',  color:'#3a7d14', ex:'NASDAQ'},
+  SKYW:{name:'SkyWest Airlines',   color:'#014A8F', ex:'NASDAQ'},
+  SAVE:{name:'Spirit Airlines',    color:'#FFD900', ex:'OTC'},
 };
 
-const CAL_DATA=[
-  {ticker:'DAL',release:'Apr 8, 2026 (pre-market)',call:'Apr 8 · 10:00 AM EDT',status:'rep',ir:'https://ir.delta.com',eps:'$0.64',rev:'$14.2B',note:'Record quarter. Adj pre-tax income $532M despite GAAP net loss from $550M investment write-down on Air France-KLM, LATAM, Korean Air equity stakes.'},
-  {ticker:'ALK',release:'Apr 20, 2026 (after close)',call:'Apr 21 · 11:30 AM EDT',status:'tod',ir:'https://investor.alaskaair.com',eps:'-$1.68',rev:'$3.3B',note:'Hawaii storms and Mexico civil unrest drove ~1pt RASM headwind. Suspended FY26 guidance. Q2 adj loss/share est. ~($1.00) due to fuel spike.'},
-  {ticker:'UAL',release:'Apr 21, 2026 (after close)',call:'Apr 22 · 10:30 AM EDT (9:30 CT)',status:'sch',ir:'https://ir.united.com',eps:'est. ~$0.01',rev:'est. $14.45B',note:'Reporting after close today. Potential merger with AAL reported (Bloomberg Apr 13). Capacity cut 5%. New AFA labor agreement reached Mar 26.'},
-  {ticker:'LUV',release:'Apr 23, 2026 (pre-market)',call:'Apr 23 · 10:00 AM EDT',status:'sch',ir:'https://www.southwestairlinesinvestorrelations.com',eps:'est. ≥$0.45',rev:'est. $7.22B',note:'Call Apr 23 10:00 ET. Guided FY26 EPS ≥$4 vs FY25 $0.93. Major transformation: assigned seating (Jan 2026), new bag fees, new boarding process.'},
-  {ticker:'AAL',release:'Apr 23, 2026 (pre-market)',call:'Apr 23 · 7:30 AM CDT (8:30 ET)',status:'sch',ir:'https://americanairlines.gcs-web.com',eps:'est. -$0.45',rev:'est. $13.8B',note:'Q1 impacted by Winter Storm Fern (~9,000 cancellations, ~$175M rev) and gov shutdown (~$325M). Centennial year (founded 1926). New Citi co-brand card.'},
-  {ticker:'JBLU',release:'Date TBD',call:'TBD',status:'tbd',ir:'https://ir.jetblue.com',eps:'est. TBD',rev:'est. TBD',note:'Date not yet announced.'},
-  {ticker:'ULCC',release:'Date TBD',call:'TBD',status:'tbd',ir:'https://ir.flyfrontier.com',eps:'est. TBD',rev:'est. TBD',note:'Date not yet announced.'},
-  {ticker:'SKYW',release:'Date TBD',call:'TBD',status:'tbd',ir:'https://ir.skywest.com',eps:'est. TBD',rev:'est. TBD',note:'Date not yet announced.'},
+// Calendar data
+const CAL = [
+  {t:'DAL', rel:'Apr 8 (pre-mkt)',    call:'Apr 8 · 10:00 AM ET',         st:'rep', ir:'https://ir.delta.com',                              eps:'$0.64', rev:'$14.2B', note:'Record adj revenue. Adj pre-tax income $532M. GAAP net loss $289M from $550M investment write-down on airline equity stakes.'},
+  {t:'ALK', rel:'Apr 20 (after close)',call:'Apr 21 · 11:30 AM ET',        st:'rep', ir:'https://investor.alaskaair.com',                    eps:'-$1.68',rev:'$3.30B', note:'Hawaii storms & Mexico civil unrest ~1pt RASM headwind. RASM +3.5%, CASM-ex +6.3%. Suspended FY26 guidance. Q2 est. adj loss ~($1.00)/share.'},
+  {t:'UAL', rel:'Apr 21 (after close)',call:'Apr 22 · 10:30 AM ET',        st:'rep', ir:'https://ir.united.com',                             eps:'$1.19 adj',rev:'$14.61B',note:'Record Q1 revenue. Net income $699M (+80%). TRASM +6.9%, CASM-ex +5.9%. Cut FY26 EPS guide to $7–$11 from $12–$14 due to fuel surge.'},
+  {t:'LUV', rel:'Apr 23 (pre-mkt)',   call:'Apr 23 · 10:00 AM ET',        st:'sch', ir:'https://www.southwestairlinesinvestorrelations.com', eps:'est.≥$0.45',rev:'est.$7.22B',note:'Call Apr 23 10:00 ET. Guided FY26 EPS ≥$4 vs FY25 $0.93. Transformation: assigned seating (Jan 2026), new bag fees.'},
+  {t:'AAL', rel:'Apr 23 (pre-mkt)',   call:'Apr 23 · 8:30 AM ET (7:30 CT)',st:'sch', ir:'https://americanairlines.gcs-web.com',              eps:'est.-$0.45',rev:'est.$13.8B',note:'Q1 impacted by Winter Storm Fern (~$175M) and gov shutdown (~$325M). Centennial year. New Citi co-brand card.'},
+  {t:'JBLU',rel:'Apr 28 (after close)',call:'Apr 29 · 9:30 AM ET',        st:'sch', ir:'https://ir.jetblue.com',                            eps:'est.-$0.72',rev:'est.$2.24B',note:'Jet Forward cost savings ramping. RASM guidance +5–7% YoY. Fuel avg est. $3.01–$3.06/gal Q1. GTF engine AOG risk.'},
+  {t:'ULCC',rel:'Apr 30 (TBD)',       call:'Apr 30 · TBD',                st:'sch', ir:'https://ir.flyfrontier.com',                        eps:'est.-$0.32 to -$0.44',rev:'est.~$987M',note:'Revenue significantly above expectations Q1. Fuel spike and Winter Storm Iona offset gains. Reviewing FY26 guidance.'},
+  {t:'SKYW',rel:'Date TBD',          call:'TBD',                          st:'tbd', ir:'https://ir.skywest.com',                            eps:'est.TBD',rev:'est.TBD',note:'Date not yet announced.'},
+  {t:'SAVE',rel:'N/A (bankruptcy)',   call:'N/A',                          st:'tbd', ir:'https://www.spirit.com/about/investor-relations',   eps:'N/A',rev:'N/A',note:'Spirit Airlines filed for Chapter 11 bankruptcy protection in Nov 2024. Restructuring ongoing. Limited public reporting.'},
 ];
 
-const COMP_DATA={
-  DAL:{status:'rep',
-    headline:{'Adj. EPS':'$0.64','EPS YoY':'+44%','Total revenue':'$14.2B','Revenue YoY':'+9.4%','Op. margin':'~4%'},
-    unit:{'RASM':'17.2¢','CASM-ex':'15.13¢','Load factor':'84%','Capacity YoY':'+1%','Fuel $/gal':'$2.78'},
-    mix:{'Premium rev YoY':'+14%','Loyalty rev YoY':'+13%','Cargo rev YoY':'+9%','Corp. sales YoY':'record (dbl-digit)'},
-    regional:{'Domestic':{rev:'$8.72B',unitRevYoy:'+6%',capYoy:'+1%'},'Atlantic':{rev:'$1.52B',unitRevYoy:'+7%',capYoy:'+3%'},'Latin America':{rev:'$1.33B',unitRevYoy:'+3%',capYoy:'-3%'},'Pacific':{rev:'$740M',unitRevYoy:'+6%',capYoy:'+3%'}},
-    other:'Cargo +9% · MRO +25% · Loyalty +13% · AmEx remuneration +10%',
-    note:'GAAP net loss $289M due to $550M loss on equity investments. Adj pre-tax income $532M. Domestic unit rev positive for first full quarter since late 2024.'},
-  ALK:{status:'tod',
-    headline:{'Adj. EPS':'-$1.68','EPS YoY':'n/m','Total revenue':'$3.30B','Revenue YoY':'+5.0%','Op. margin':'-9.6%'},
-    unit:{'RASM':'15.30¢','CASM-ex':'12.37¢','Load factor':'~83%','Capacity YoY':'+1.7%','Fuel $/gal':'$2.98'},
-    mix:{'Premium rev YoY':'+8%','Loyalty rev YoY':'+12%','Corp. rev YoY':'+19%','SEA-TYO route':'profitable Mar'},
-    regional:{'Domestic':{rev:'~$2.7B',unitRevYoy:'+3.5%',capYoy:'+1.7%'},'Hawaii':{rev:'impacted',unitRevYoy:'headwind storms',capYoy:'n/a'},'International':{rev:'growing',unitRevYoy:'SEA-TYO >90% load',capYoy:'expanding'},'Mexico / LatAm':{rev:'~$200M',unitRevYoy:'headwind civil unrest',capYoy:'n/a'}},
-    other:'BoA co-brand extension · Loyalty +12% · 90%+ premium fleet retrofit done',
-    note:'Hawaii storms & Mexico civil unrest drove ~1pt unit revenue headwind. Suspended FY26 guidance. Q2 adj loss ~($1.00)/share on fuel spike.'},
-  UAL:{status:'sch',
-    headline:{'Adj. EPS':'est. ~$0.01','EPS YoY':'est.','Total revenue':'est. $14.45B','Revenue YoY':'est. +9.4%','Op. margin':'est.'},
-    unit:{'RASM':'est.','CASM-ex':'est.','Load factor':'est.','Capacity YoY':'-5% (cut)','Fuel $/gal':'est. ~$4.50'},
-    mix:{'Premium rev YoY':'est.','Loyalty rev YoY':'est.','MileagePlus members':'130M+','AFA agreement':'reached Mar 26'},
-    regional:{'Domestic':{rev:'est.',unitRevYoy:'est.',capYoy:'-5%'},'Atlantic':{rev:'est.',unitRevYoy:'est.',capYoy:'est.'},'Pacific':{rev:'est.',unitRevYoy:'est.',capYoy:'est.'},'Latin America':{rev:'est.',unitRevYoy:'est.',capYoy:'est.'}},
-    other:'Results due after close Apr 21 · Call Apr 22 10:30 ET · FY25 adj EPS $10.62',
-    note:'Reporting after close today. Potential AAL merger reported. Fuel surged ~$400M. Cut capacity 5% and suspended inefficient routes.'},
-  LUV:{status:'sch',
-    headline:{'Adj. EPS':'est. ≥$0.45','EPS YoY':'est.','Total revenue':'est. $7.22B','Revenue YoY':'est. +12.3%','Op. margin':'est.'},
-    unit:{'RASM':'est. +9.5%+ YoY','CASM-ex':'est. +3.5% YoY','Load factor':'est.','Capacity YoY':'+1-2%','Fuel $/gal':'est. elevated'},
-    mix:{'Cabin type':'single class','Seating':'assigned (Jan 2026)','Bag fees':'now charging','FY26 EPS guide':'≥$4.00'},
-    regional:{'Domestic':{rev:'est. ~$7.2B (domestic only)',unitRevYoy:'est. +9.5%+',capYoy:'+1-2%'},'Atlantic':{rev:'N/A',unitRevYoy:'N/A',capYoy:'N/A'},'Pacific':{rev:'N/A',unitRevYoy:'N/A',capYoy:'N/A'},'Latin America':{rev:'N/A',unitRevYoy:'N/A',capYoy:'N/A'}},
-    other:'Domestic-only carrier. Transformation to assigned seating ongoing.',
-    note:'Call Apr 23 10:00 AM ET. FY25 adj EPS $0.93; guided FY26 ≥$4 EPS. New bag fees and assigned seating are major strategic shifts.'},
-  AAL:{status:'sch',
-    headline:{'Adj. EPS':'est. -$0.45','EPS YoY':'est.','Total revenue':'est. $13.8B','Revenue YoY':'est. +9%+','Op. margin':'est.'},
-    unit:{'RASM':'est.','CASM-ex':'est. +3-5% YoY','Load factor':'est.','Capacity YoY':'+3-5%','Fuel $/gal':'est. elevated'},
-    mix:{'Premium rev YoY':'est.','Loyalty rev YoY':'est.','Citi co-brand':'new partnership','Centennial year':'founded 1926'},
-    regional:{'Domestic':{rev:'est.',unitRevYoy:'est.',capYoy:'+3-5%'},'Atlantic':{rev:'est.',unitRevYoy:'est.',capYoy:'est.'},'Pacific':{rev:'est.',unitRevYoy:'est.',capYoy:'est.'},'Latin America':{rev:'est.',unitRevYoy:'est.',capYoy:'est.'}},
-    other:'Citi co-brand launched · Pivoting back to premium & corporate · Centennial year',
-    note:'Call Apr 23 7:30 AM CDT. Hit by Winter Storm Fern (~9,000 cancellations, ~$175M) and gov shutdown (~$325M).'},
+const SM = {rep:['Reported','sb-rep'],tod:['Today','sb-tod'],sch:['Scheduled','sb-sch'],tbd:['TBD','sb-tbd']};
+
+// ── MULTI-QUARTER COMPARISON DATA ──
+// Sections per quarter: headline, unit, costs, mix, regional, other, note
+const QD = {
+  'Q1 2026': {
+    DAL:{st:'rep',
+      headline:{'Adj. EPS':'$0.64 (+44%)','Total revenue':'$14.2B (+9.4%)','Net income':'$−289M GAAP / $532M adj pre-tax','Op. margin':'~4%'},
+      unit:{'RASM':'17.2¢ (+8.2%)','CASM-ex':'15.13¢ (+6%)','Load factor':'84%','Capacity YoY':'+1%'},
+      costs:{'Fuel cost/gal':'$2.78 (+12% YoY)','Fuel expense':'est.~$2.7B','Wages & benefits':'est.~$3.9B (+~7%)','Total op. expense YoY':'+14%'},
+      mix:{'Premium rev YoY':'+14%','Loyalty rev YoY':'+13%','Cargo rev YoY':'+9%','Corp. sales':'record (dbl-digit)'},
+      regional:{
+        'Domestic':     {rev:'$8.72B',ury:'+6%',cap:'+1%'},
+        'Atlantic':     {rev:'$1.52B',ury:'+7%',cap:'+3%'},
+        'Latin America':{rev:'$1.33B',ury:'+3%',cap:'-3%'},
+        'Pacific':      {rev:'$740M', ury:'+6%',cap:'+3%'},
+      },
+      other:'Cargo +9% · MRO +25% · Loyalty +13% · AmEx remuneration +10%',
+      note:'GAAP net loss $289M from $550M investment write-down. Adj pre-tax $532M. Main cabin unit rev positive first full quarter since late 2024.'},
+    ALK:{st:'rep',
+      headline:{'Adj. EPS':'-$1.68 (n/m)','Total revenue':'$3.30B (+5.0%)','Net income':'-$193M GAAP / -$192M adj','Op. margin':'-9.6%'},
+      unit:{'RASM':'15.30¢ (+3.5%)','CASM-ex':'12.37¢ (+6.3%)','Load factor':'~83%','Capacity YoY':'+1.7%'},
+      costs:{'Fuel cost/gal':'$2.98 (+14.2%)','Fuel expense':'up ~17%','Wages & benefits':'+10% YoY','Total op. expense YoY':'+14%'},
+      mix:{'Premium rev YoY':'+8%','Loyalty rev YoY':'+12%','Corp. rev YoY':'+19%','SEA-TYO route':'profitable Mar'},
+      regional:{
+        'Domestic / West Coast':{rev:'~$2.7B',ury:'+3.5%',cap:'+1.7%'},
+        'Hawaii':               {rev:'impacted',ury:'headwind (storms)',cap:'n/a'},
+        'International (Japan)':{rev:'growing',ury:'SEA-TYO >90% load',cap:'expanding'},
+        'Mexico / LatAm':       {rev:'~$200M',ury:'headwind civil unrest',cap:'n/a'},
+      },
+      other:'BoA co-brand extension · Loyalty +12% · 90%+ premium fleet retrofit done',
+      note:'Hawaii storms & Mexico civil unrest drove ~1pt RASM headwind. Suspended FY26 guidance. Q2 adj loss est. ~($1.00)/share on fuel spike.'},
+    UAL:{st:'rep',
+      headline:{'Adj. EPS':'$1.19 (+31%)','Total revenue':'$14.61B (+10.6%)','Net income':'$699M GAAP (+80%)','Op. margin':'6.8%'},
+      unit:{'RASM':'17.52¢ (+6.9%)','CASM-ex':'13.95¢ (+5.9%)','Load factor':'~84%','Capacity YoY':'+3.4%'},
+      costs:{'Fuel cost/gal':'$2.78 (+9.9%)','Fuel expense':'+$340M vs Q1\'25','Wages & benefits':'~32% of op. costs','Total op. expense YoY':'+4.4% CASM'},
+      mix:{'Premium rev YoY':'+14%','Loyalty rev YoY':'+13%','Business rev YoY':'+14%','MileagePlus members':'130M+'},
+      regional:{
+        'Domestic':     {rev:'$7.9B',ury:'+7.9%',cap:'+~3%'},
+        'Atlantic':     {rev:'est.~$3.0B',ury:'positive',cap:'positive'},
+        'Pacific':      {rev:'est.~$1.8B',ury:'positive',cap:'positive'},
+        'Latin America':{rev:'est.',ury:'improving',cap:'est.'},
+      },
+      other:'Best Q1 on-time departure of 8 largest US carriers · FY25 adj EPS $10.62',
+      note:'Record Q1 revenue. Cut FY26 adj EPS guide to $7–$11 (was $12–$14) due to Iran war fuel spike. Fuel +$340M vs Q1\'25. Q2 guide $1–$2 adj EPS.'},
+    LUV:{st:'sch',
+      headline:{'Adj. EPS':'est.≥$0.45','Total revenue':'est.$7.22B (+12.3%)','Net income':'est. positive','Op. margin':'est.'},
+      unit:{'RASM':'est.+9.5%+ YoY','CASM-ex':'est.+3.5% YoY','Load factor':'est.','Capacity YoY':'+1–2%'},
+      costs:{'Fuel cost/gal':'est. elevated','Fuel expense':'est.','Wages & benefits':'flat to 2025','Total op. expense YoY':'est.'},
+      mix:{'Cabin type':'single class','Seating':'assigned (Jan 2026)','Bag fees':'now charging','FY26 EPS guide':'≥$4.00'},
+      regional:{
+        'Domestic (only network)':{rev:'est.~$7.2B',ury:'est.+9.5%+',cap:'+1–2%'},
+        'Atlantic':{rev:'N/A',ury:'N/A',cap:'N/A'},
+        'Pacific':{rev:'N/A',ury:'N/A',cap:'N/A'},
+        'Latin America':{rev:'N/A',ury:'N/A',cap:'N/A'},
+      },
+      other:'Domestic-only network. Transformation: assigned seating, new bag fees.',
+      note:'Call Apr 23 10:00 ET. FY25 adj EPS $0.93; guided FY26 ≥$4. Assigned seating & bag fees are major strategic shifts.'},
+    AAL:{st:'sch',
+      headline:{'Adj. EPS':'est.-$0.45','Total revenue':'est.$13.8B (+9%+)','Net income':'est. loss','Op. margin':'est.'},
+      unit:{'RASM':'est.','CASM-ex':'est.+3–5% YoY','Load factor':'est.','Capacity YoY':'+3–5%'},
+      costs:{'Fuel cost/gal':'est. elevated','Fuel expense':'est.','Wages & benefits':'est.','Total op. expense YoY':'est.'},
+      mix:{'Premium rev YoY':'est.','Loyalty rev YoY':'est.','Citi co-brand':'new (2026)','Centennial year':'founded 1926'},
+      regional:{
+        'Domestic':     {rev:'est.',ury:'est.',cap:'+3–5%'},
+        'Atlantic':     {rev:'est.',ury:'est.',cap:'est.'},
+        'Pacific':      {rev:'est.',ury:'est.',cap:'est.'},
+        'Latin America':{rev:'est.',ury:'est.',cap:'est.'},
+      },
+      other:'New Citi co-brand · pivoting back to premium & corporate.',
+      note:'Call Apr 23 8:30 ET. Q1 hit by Winter Storm Fern (~$175M) and gov shutdown (~$325M). Centennial year.'},
+    JBLU:{st:'sch',
+      headline:{'Adj. EPS':'est.-$0.72','Total revenue':'est.$2.24B','Net income':'est. loss','Op. margin':'est. near 0%'},
+      unit:{'RASM':'est.+5–7% YoY','CASM-ex':'est.+6.5–7.5% YoY','Load factor':'est.','Capacity YoY':'+0.5–3.5%'},
+      costs:{'Fuel cost/gal':'est.$3.01–3.06','Fuel expense':'est.','Wages & benefits':'est.','Total op. expense YoY':'est.'},
+      mix:{'Loyalty rev YoY':'+8% (2025)','Premium/first class':'launching','Jet Forward savings':'$305M incremental 2025','GTF AOG impact':'ongoing'},
+      regional:{
+        'Domestic':       {rev:'est.',ury:'est.',cap:'est.'},
+        'Caribbean/LatAm':{rev:'est.',ury:'headwind (airspace)',cap:'est.'},
+        'Atlantic':       {rev:'est.',ury:'est.',cap:'est.'},
+        'Pacific':{rev:'N/A',ury:'N/A',cap:'N/A'},
+      },
+      other:'Jet Forward executing. GTF engine issues causing AOGs. First class launches.',
+      note:'Reports Apr 28 after close. Targeting breakeven op margin 2026, positive FCF by 2027.'},
+    ULCC:{st:'sch',
+      headline:{'Adj. EPS':'est.-$0.32 to -$0.44','Total revenue':'est.~$987M','Net income':'est. loss','Op. margin':'est.neg'},
+      unit:{'RASM':'mid-teens+ YoY (stage-adj)','CASM-ex':'est.','Load factor':'est.','Capacity YoY':'~10%'},
+      costs:{'Fuel cost/gal':'est. elevated','Fuel expense':'est.','Wages & benefits':'est.','Total op. expense YoY':'est.'},
+      mix:{'Model':'ULCC (ancillary)','Revenue above expect.':'yes Q1','Storm Iona impact':'Mar 15–16','FY26 EPS guide':'-$0.40 to +$0.50'},
+      regional:{
+        'Domestic':{rev:'~100%',ury:'mid-teens+ (stage adj)',cap:'+~10%'},
+        'Atlantic':{rev:'N/A',ury:'N/A',cap:'N/A'},
+        'Pacific':{rev:'N/A',ury:'N/A',cap:'N/A'},
+        'Latin America':{rev:'limited',ury:'est.',cap:'limited'},
+      },
+      other:'ULCC model. Ancillary revenue (bags, seats) drives margins.',
+      note:'Reports Apr 30. Revenue well above expectations but fuel spike and Winter Storm Iona offset. Reviewing FY26 guidance.'},
+  },
+  'Q4 2025': {
+    DAL:{st:'rep',
+      headline:{'Adj. EPS':'$1.55','Total revenue':'$15.6B (+3%)','Net income':'positive','Op. margin':'10%'},
+      unit:{'RASM':'18.6¢','CASM-ex':'14.6¢','Load factor':'~84%','Capacity YoY':'+1%'},
+      costs:{'Fuel cost/gal':'$2.74','Fuel expense':'est.','Wages & benefits':'est.','Total op. expense YoY':'+2%'},
+      mix:{'Premium rev YoY':'+7%','Loyalty rev YoY':'+6%','Cargo rev YoY':'+9%','AmEx remuneration':'$8.2B FY25'},
+      regional:{
+        'Domestic':     {rev:'~$8.9B',ury:'positive',cap:'+1%'},
+        'Atlantic':     {rev:'~$1.4B',ury:'+5pts seq.',cap:'positive'},
+        'Latin America':{rev:'~$933M',ury:'-2%',cap:'-3%'},
+        'Pacific':      {rev:'~$724M',ury:'+4%',cap:'+5%'},
+      },
+      other:'FY25 record revenue $58.3B · FY25 adj EPS ~$6',
+      note:'Q4 impacted by gov shutdown (~$200M / $0.25/share). FY25 record revenue $58.3B. Free cash flow $4.6B FY25.'},
+    UAL:{st:'rep',
+      headline:{'Adj. EPS':'$3.10','Total revenue':'$15.4B (+4.8%)','Net income':'$1B','Op. margin':'~9%'},
+      unit:{'RASM':'~18.2¢ (-1.6% QoQ)','CASM-ex':'~13.8¢ (+0.4%)','Load factor':'est.','Capacity YoY':'+6.5%'},
+      costs:{'Fuel cost/gal':'$2.49','Fuel expense':'est.','Wages & benefits':'est.','Total op. expense YoY':'-0.3% CASM'},
+      mix:{'Premium rev YoY':'positive','Loyalty rev YoY':'+14%','Cargo':'$1.8B FY25 (+2.1%)','Co-brand adds':'>1M Q4'},
+      regional:{
+        'Domestic':     {rev:'est.',ury:'largest hit Q4',cap:'+6.5%'},
+        'Atlantic':     {rev:'est.~$2.5B',ury:'positive Q4',cap:'positive'},
+        'Pacific':      {rev:'est.~$1.6B',ury:'positive Q4',cap:'positive'},
+        'Latin America':{rev:'est.',ury:'challenging',cap:'est.'},
+      },
+      other:'FY25 adj EPS $10.62. FY25 op cash flow $8.4B. 181M passengers (record).',
+      note:'Best Q1–Q4 on-time record in 2025. FY25 adj EPS $10.62. Gov shutdown Q4 impact. Q4 TRASM -1.6% QoQ but improving into 2026.'},
+    AAL:{st:'rep',
+      headline:{'Adj. EPS':'$0.86','Total revenue':'$13.1B (+3–5%)','Net income':'$590M GAAP','Op. margin':'~5–7%'},
+      unit:{'RASM':'~15.6¢','CASM-ex':'~15.0¢','Load factor':'est.','Capacity YoY':'+3–5%'},
+      costs:{'Fuel cost/gal':'est.~$2.55','Fuel expense':'est.','Wages & benefits':'est.','Total op. expense YoY':'est.'},
+      mix:{'FY25 adj EPS':'$1.96','FY25 revenue':'record $54B','FY25 FCF':'record $2.2B','Debt reduction':'ongoing'},
+      regional:{
+        'Domestic':     {rev:'est.',ury:'est.',cap:'+3–5%'},
+        'Atlantic':     {rev:'est.',ury:'est.',cap:'est.'},
+        'Pacific':      {rev:'est.',ury:'est.',cap:'est.'},
+        'Latin America':{rev:'est.',ury:'est.',cap:'est.'},
+      },
+      other:'FY25 record revenue $54B. FY25 free cash flow record $2.2B.',
+      note:'FY25 record revenue. Debt reduction continuing. Pivoting to premium/corporate. Citi co-brand starts 2026.'},
+    ALK:{st:'rep',
+      headline:{'Adj. EPS':'$0.43','Total revenue':'$3.60B (+0.6% RASM)','Net income':'positive','Op. margin':'~1.8%'},
+      unit:{'RASM':'16.8¢ (+0.6%)','CASM-ex':'11.7¢ (+1.3%)','Load factor':'est.','Capacity YoY':'+2.2%'},
+      costs:{'Fuel cost/gal':'est.~$2.60','Fuel expense':'est.','Wages & benefits':'est.','Total op. expense YoY':'est.'},
+      mix:{'Premium rev YoY':'+7%','Loyalty rev YoY':'+12%','Corp. travel':'+9% YoY','Cargo rev':'+22%'},
+      regional:{
+        'Domestic':{rev:'~$3.0B',ury:'+0.6%',cap:'+2.2%'},
+        'Hawaii':{rev:'included',ury:'recovering',cap:'positive'},
+        'International':{rev:'small',ury:'growing',cap:'expanding'},
+        'Mexico / LatAm':{rev:'included',ury:'est.',cap:'est.'},
+      },
+      other:'BoA co-brand reaffirmed · cargo +22% · Corp +9%',
+      note:'Outperformed initial RASM/CASM guide. Integrated Hawaiian Airlines ops. Gov shutdown Q4 impact (~temp demand pullback).'},
+    LUV:{st:'rep',
+      headline:{'Adj. EPS':'$0.57','Total revenue':'est.$6.9B','Net income':'positive','Op. margin':'est.'},
+      unit:{'RASM':'est.+1%','CASM-ex':'est.','Load factor':'est.','Capacity YoY':'flat'},
+      costs:{'Fuel cost/gal':'est.','Fuel expense':'est.','Wages & benefits':'est.','Total op. expense YoY':'est.'},
+      mix:{'FY25 adj EPS':'$0.93','FY25 buybacks':'$2.6B','FY25 dividends':'$399M','FY26 guide':'≥$4 EPS'},
+      regional:{
+        'Domestic (only network)':{rev:'est.~$6.9B',ury:'+1% est.',cap:'flat'},
+        'Atlantic':{rev:'N/A',ury:'N/A',cap:'N/A'},
+        'Pacific':{rev:'N/A',ury:'N/A',cap:'N/A'},
+        'Latin America':{rev:'N/A',ury:'N/A',cap:'N/A'},
+      },
+      other:'FY25: record revenue, adj EPS $0.93, buybacks $2.6B.',
+      note:'FY25 adj EPS $0.93. Major transformation in progress. Assigned seating launches Jan 2026. FY26 guide ≥$4 EPS.'},
+  },
+  'Q3 2025': {
+    DAL:{st:'rep',
+      headline:{'Adj. EPS':'$1.53','Total revenue':'$15.2B (+5%)','Net income':'$1.4B','Op. margin':'10.1%'},
+      unit:{'RASM':'18.4¢','CASM-ex':'14.8¢','Load factor':'~86%','Capacity YoY':'+1%'},
+      costs:{'Fuel cost/gal':'est.~$2.65','Fuel expense':'est.','Wages & benefits':'est.','Total op. expense YoY':'+5%'},
+      mix:{'Premium rev YoY':'positive','Loyalty rev YoY':'positive','Main cabin':'narrowing gap','Corp. travel':'growing'},
+      regional:{
+        'Domestic':     {rev:'~$8.5B',ury:'positive',cap:'+1%'},
+        'Atlantic':     {rev:'~$2.0B',ury:'strongest',cap:'positive'},
+        'Latin America':{rev:'~$1.1B',ury:'improving',cap:'-3%'},
+        'Pacific':      {rev:'~$900M',ury:'positive',cap:'+3%'},
+      },
+      other:'Record Q3 revenue. Main-premium gap narrowed to $267M.',
+      note:'Record September quarter revenue. Premium/corporate tilt delivering. Main-to-premium gap narrowed to $267M from $973M in Q3 2024.'},
+    UAL:{st:'rep',
+      headline:{'Adj. EPS':'$3.33','Total revenue':'$14.8B','Net income':'positive','Op. margin':'est.'},
+      unit:{'RASM':'17.6¢','CASM-ex':'13.7¢','Load factor':'est.','Capacity YoY':'est.'},
+      costs:{'Fuel cost/gal':'est.~$2.55','Fuel expense':'est.','Wages & benefits':'est.','Total op. expense YoY':'est.'},
+      mix:{'Premium':'leading','Loyalty':'+9% FY25','Cargo':'positive','Corporate':'growing'},
+      regional:{
+        'Domestic':     {rev:'est.',ury:'demand misalignment',cap:'heavy'},
+        'Atlantic':     {rev:'est.',ury:'positive',cap:'positive'},
+        'Pacific':      {rev:'est.',ury:'positive Q4',cap:'positive'},
+        'Latin America':{rev:'est.',ury:'challenging',cap:'est.'},
+      },
+      other:'Capacity/demand misalignment in domestic flagged by management.',
+      note:'TRASM down YoY despite lower costs. Management flagged domestic capacity/demand misalignment. Needed rebalancing.'},
+    AAL:{st:'rep',
+      headline:{'Adj. EPS':'-$0.28','Total revenue':'$13.7B (record)','Net income':'-$114M','Op. margin':'est.'},
+      unit:{'RASM':'15.8¢','CASM-ex':'15.2¢','Load factor':'est.','Capacity YoY':'est.'},
+      costs:{'Fuel cost/gal':'est.','Fuel expense':'est.','Wages & benefits':'est.','Total op. expense YoY':'~10% higher than UAL'},
+      mix:{'Domestic PRASM':'down >6%','Intl PRASM':'up ~3%','Indirect revenue':'down ~3%','Strategy':'returning to indirect'},
+      regional:{
+        'Domestic':     {rev:'est.',ury:'down >6%',cap:'positive'},
+        'Atlantic':     {rev:'est.',ury:'+~3%',cap:'positive'},
+        'Pacific':      {rev:'est.',ury:'est.',cap:'est.'},
+        'Latin America':{rev:'est.',ury:'est.',cap:'est.'},
+      },
+      other:'Record Q3 revenue $13.7B but net loss $114M. Costs ~10% higher than UAL.',
+      note:'Record Q3 revenue but net loss. Domestic unit revenue weak. Pivoting back to indirect distribution channels.'},
+    ALK:{st:'rep',
+      headline:{'Adj. EPS':'$0.86','Total revenue':'$3.70B','Net income':'positive','Op. margin':'positive'},
+      unit:{'RASM':'17.6¢','CASM-ex':'12.0¢','Load factor':'est.','Capacity YoY':'est.'},
+      costs:{'Fuel cost/gal':'est.','Fuel expense':'est.','Wages & benefits':'est.','Total op. expense YoY':'est.'},
+      mix:{'Premium':'positive','Loyalty':'+12%','Corp.':'growing','Cargo':'+22%'},
+      regional:{
+        'Domestic':{rev:'est.',ury:'positive',cap:'est.'},
+        'Hawaii':{rev:'included',ury:'positive',cap:'est.'},
+        'International':{rev:'small',ury:'positive',cap:'est.'},
+        'Mexico / LatAm':{rev:'included',ury:'est.',cap:'est.'},
+      },
+      other:'Strong Q3. Revenue quality improving with Hawaiian integration.',
+      note:'Strong Q3 result. Market reaction -6.13% despite strong numbers — pattern of sell-the-news on results.'},
+    LUV:{st:'rep',
+      headline:{'Adj. EPS':'-$0.28 (Q3 2025)','Total revenue':'est.$6.5B','Net income':'loss','Op. margin':'negative'},
+      unit:{'RASM':'est.','CASM-ex':'est.','Load factor':'est.','Capacity YoY':'est.'},
+      costs:{'Fuel cost/gal':'est.','Fuel expense':'est.','Wages & benefits':'est.','Total op. expense YoY':'est.'},
+      mix:{'Strategy':'mid-transformation','Bag fees':'announced','Seating change':'planned Jan 2026','Cost savings':'ramping'},
+      regional:{
+        'Domestic (only network)':{rev:'est.',ury:'challenging',cap:'est.'},
+        'Atlantic':{rev:'N/A',ury:'N/A',cap:'N/A'},
+        'Pacific':{rev:'N/A',ury:'N/A',cap:'N/A'},
+        'Latin America':{rev:'N/A',ury:'N/A',cap:'N/A'},
+      },
+      other:'Deep transformation underway. Seat fees and assigned seating incoming.',
+      note:'Mid-transformation. Domestic economy demand weakest of big five. Elliott activist investor driving changes.'},
+  },
 };
 
-const TREND_DATA={
-  labels:["Q4'24","Q1'25","Q2'25","Q3'25","Q4'25","Q1'26"],
-  DAL:{rev:[16.0,13.0,15.4,15.2,15.6,14.2],eps:[1.28,0.46,2.36,1.53,1.55,0.64],rasm:[18.5,15.8,18.2,18.4,18.6,17.2],casmex:[14.2,14.3,14.5,14.8,14.6,15.13]},
-  UAL:{rev:[14.7,13.2,15.0,14.8,15.4,null],eps:[3.26,0.91,4.45,3.33,3.10,null],rasm:[17.8,16.1,18.0,17.6,18.2,null],casmex:[13.8,14.0,13.9,13.7,13.8,null]},
-  AAL:{rev:[13.7,12.6,14.4,13.7,13.1,null],eps:[0.86,-0.59,0.95,-0.28,0.16,null],rasm:[16.2,14.8,16.4,15.8,15.6,null],casmex:[14.8,15.1,15.0,15.2,15.0,null]},
-  ALK:{rev:[3.60,3.14,3.60,3.70,3.60,3.30],eps:[0.43,-1.35,1.16,0.86,0.43,-1.68],rasm:[17.8,14.8,17.5,17.6,16.8,15.30],casmex:[12.0,11.6,11.8,12.0,11.7,12.37]},
+// ── TREND DATA ──
+const QLABELS = ["Q4'24","Q1'25","Q2'25","Q3'25","Q4'25","Q1'26"];
+const TD = {
+  DAL: {rev:[16.0,13.0,15.4,15.2,15.6,14.2], eps:[1.28,0.46,2.36,1.53,1.55,0.64], rasm:[18.5,15.8,18.2,18.4,18.6,17.2], casmex:[14.2,14.3,14.5,14.8,14.6,15.13]},
+  UAL: {rev:[14.7,13.2,15.0,14.8,15.4,14.61],eps:[3.26,0.91,4.45,3.33,3.10,1.19], rasm:[17.8,16.1,18.0,17.6,18.2,17.52],casmex:[13.8,14.0,13.9,13.7,13.8,13.95]},
+  AAL: {rev:[13.7,12.6,14.4,13.7,13.1,null], eps:[0.86,-0.59,0.95,-0.28,0.16,null],rasm:[16.2,14.8,16.4,15.8,15.6,null], casmex:[14.8,15.1,15.0,15.2,15.0,null]},
+  ALK: {rev:[3.60,3.14,3.60,3.70,3.60,3.30], eps:[0.43,-1.35,1.16,0.86,0.43,-1.68],rasm:[17.8,14.8,17.5,17.6,16.8,15.30],casmex:[12.0,11.6,11.8,12.0,11.7,12.37]},
+  LUV: {rev:[6.60,6.40,7.23,6.50,6.90,null], eps:[0.57,-0.13,0.58,-0.28,0.57,null], rasm:[13.8,12.9,14.2,13.5,13.8,null], casmex:[13.0,13.2,13.1,13.3,13.1,null]},
+  JBLU:{rev:[2.30,2.14,2.40,2.50,2.38,null], eps:[-0.71,-0.59,-0.06,-0.40,-0.55,null],rasm:[11.4,10.8,12.1,12.3,11.9,null],casmex:[13.8,14.0,13.5,13.8,14.1,null]},
+  ULCC:{rev:[0.997,0.87,1.05,1.10,0.997,null],eps:[0.23,-0.18,0.05,-0.50,0.23,null],rasm:[10.2,9.8,11.0,11.2,10.2,null],casmex:[9.5,9.8,9.6,9.9,9.7,null]},
 };
 
-const METRIC_META={
-  rev:{label:'Quarterly revenue ($B)',sub:'Total adjusted revenue · Q4 2024 – Q1 2026',fmt:v=>'$'+v+'B'},
-  eps:{label:'Adjusted EPS ($)',sub:'Earnings per share · adjusted · Q4 2024 – Q1 2026',fmt:v=>(v<0?'-$':'$')+Math.abs(v).toFixed(2)},
-  rasm:{label:'RASM (cents)',sub:'Revenue per available seat mile · Q4 2024 – Q1 2026',fmt:v=>v+'¢'},
-  casmex:{label:'CASM-ex (cents)',sub:'Non-fuel cost per ASM · Q4 2024 – Q1 2026',fmt:v=>v+'¢'},
+const TCOLORS = {
+  DAL:'#c05070',UAL:'#5080d0',AAL:'#60a0e8',
+  ALK:'#40a878',LUV:'#e07040',JBLU:'#4060a8',ULCC:'#60a840',
 };
 
-const STATUS_MAP={rep:['Reported','sb-rep'],tod:['Today','sb-tod'],sch:['Scheduled','sb-sch'],tbd:['TBD','sb-tbd']};
-const TREND_COLORS={DAL:'#c05070',UAL:'#5080c0',AAL:'#60a0e0',ALK:'#40a878'};
+const MMETA = {
+  rev:    {label:'Quarterly revenue ($B)',    sub:'Total adjusted revenue · Q4 2024 – Q1 2026', fmt:v=>'$'+v.toFixed(1)+'B'},
+  eps:    {label:'Adjusted EPS ($)',           sub:'Earnings per share adjusted · Q4 2024 – Q1 2026', fmt:v=>(v<0?'-$':'$')+Math.abs(v).toFixed(2)},
+  rasm:   {label:'RASM (¢)',                  sub:'Revenue per available seat mile · Q4 2024 – Q1 2026', fmt:v=>v.toFixed(1)+'¢'},
+  casmex: {label:'CASM-ex (¢)',               sub:'Non-fuel cost per ASM · Q4 2024 – Q1 2026', fmt:v=>v.toFixed(2)+'¢'},
+};
 
-let activeComparisons=new Set(['DAL','ALK','UAL','LUV','AAL']);
-let currentMetric='rev';
-let mainChart=null;
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let activeCQ = 'Q1 2026';
+let activeComp = new Set(['DAL','UAL','ALK','LUV','AAL']);
+let activeTrend = new Set(['DAL','UAL','AAL','ALK','LUV']);
+let activeMet = 'rev';
+let mainChart = null;
 
-// ════════════ PAGE NAV ════════════
-function showPage(id,btn){
+// ══════════════════════════════════════
+// PAGE NAV
+// ══════════════════════════════════════
+function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   btn.classList.add('active');
-  if(id==='comparison') buildCompTable();
-  if(id==='trends') buildTrends();
+  if(id==='comparison') { buildQSel(); buildCompToggles(); buildCompTable(); }
+  if(id==='trends') { buildMetricSel(); buildTrendToggles(); buildTrends(); }
 }
 
-// ════════════ CALENDAR TABLE ════════════
-function buildCalTable(){
-  const tbody=document.getElementById('carrier-table-body');
-  CAL_DATA.forEach(c=>{
-    const [sl,sc]=STATUS_MAP[c.status];
-    const tr=document.createElement('tr');
-    tr.onclick=()=>openDrawer(c.ticker);
-    tr.innerHTML=`<td><div style="display:flex;align-items:center;gap:10px">
-      <div class="airline-badge-sm" style="background:${CARRIERS[c.ticker]?.color||'#444'}">${c.ticker}</div>
-      <div><div class="airline-name">${CARRIERS[c.ticker]?.name||c.ticker}</div>
-      <div class="airline-ticker">${c.ticker} · ${CARRIERS[c.ticker]?.exchange||'—'}</div></div></div></td>
-      <td><div style="font-size:13px;color:var(--text)">${c.release}</div></td>
-      <td><div style="font-size:13px;color:var(--text)">${c.call}</div></td>
-      <td><span class="status-badge ${sc}">${sl}</span></td>
-      <td><a class="ir-link" href="${c.ir}" target="_blank" onclick="event.stopPropagation()">IR site →</a></td>`;
-    tbody.appendChild(tr);
+// ══════════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════════
+function buildCal() {
+  const tb = document.getElementById('cal-tbody');
+  CAL.forEach(c => {
+    const [sl,sc] = SM[c.st];
+    const row = document.createElement('tr');
+    row.onclick = () => openDrawer(c.t);
+    row.innerHTML = `<td><div style="display:flex;align-items:center;gap:10px">
+      <div class="abadge" style="background:${C[c.t]?.color||'#444'}">${c.t}</div>
+      <div><div style="font-size:13px;font-weight:500;color:var(--text)">${C[c.t]?.name||c.t}</div>
+      <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">${c.t} · ${C[c.t]?.ex||'—'}</div></div></div></td>
+      <td style="font-size:13px;color:var(--text)">${c.rel}</td>
+      <td style="font-size:13px;color:var(--text)">${c.call}</td>
+      <td><span class="sb ${sc}">${sl}</span></td>
+      <td><a class="irlink" href="${c.ir}" target="_blank" onclick="event.stopPropagation()">IR →</a></td>`;
+    tb.appendChild(row);
   });
 }
 
-// ════════════ DRAWER ════════════
-function openDrawer(ticker){
-  const c=CAL_DATA.find(x=>x.ticker===ticker);
+// ══════════════════════════════════════
+// DRAWER
+// ══════════════════════════════════════
+function openDrawer(ticker) {
+  const c = CAL.find(x=>x.t===ticker);
   if(!c) return;
-  const cc=CARRIERS[ticker];
-  const [sl,sc]=STATUS_MAP[c.status];
-  const badge=document.getElementById('d-badge');
-  badge.style.background=cc.color; badge.textContent=ticker;
-  document.getElementById('d-name').textContent=cc.name;
-  document.getElementById('d-call').textContent=c.call;
-  document.getElementById('d-stats').innerHTML=[
-    {label:'STATUS',value:`<span class="status-badge ${sc}">${sl}</span>`},
-    {label:'ADJ. EPS',value:c.eps},
-    {label:'REVENUE',value:c.rev},
-    {label:'RESULTS DATE',value:c.release},
-    {label:'CALL TIME',value:c.call},
-    {label:'EXCHANGE',value:(cc.exchange||'—')+' · '+ticker},
-  ].map(s=>`<div class="drawer-stat"><div class="ds-label">${s.label}</div><div class="ds-value">${s.value}</div></div>`).join('');
-  document.getElementById('d-links').innerHTML=`<a class="drawer-link" href="${c.ir}" target="_blank">IR website →</a>
-    <button class="drawer-link" onclick="showPage('comparison',document.querySelectorAll('.nav-btn')[1]);closeDrawer()">View comparison →</button>`;
-  document.getElementById('d-note').textContent=c.note||'Results pending.';
-  document.getElementById('drawer-overlay').classList.add('open');
+  const cc = C[ticker]||{color:'#444',name:ticker,ex:'—'};
+  const [sl,sc] = SM[c.st];
+  const bd = document.getElementById('d-badge');
+  bd.style.background = cc.color; bd.textContent = ticker;
+  document.getElementById('d-name').textContent = cc.name;
+  document.getElementById('d-call').textContent = c.call;
+  document.getElementById('d-stats').innerHTML = [
+    {l:'STATUS',v:`<span class="sb ${sc}">${sl}</span>`},
+    {l:'ADJ. EPS',v:c.eps},{l:'REVENUE',v:c.rev},
+    {l:'RESULTS DATE',v:c.rel},{l:'CALL TIME (ET)',v:c.call},
+    {l:'EXCHANGE',v:(cc.ex||'—')+' · '+ticker},
+  ].map(s=>`<div class="dst"><div class="dsl">${s.l}</div><div class="dsv">${s.v}</div></div>`).join('');
+  document.getElementById('d-links').innerHTML =
+    `<a class="dlnk" href="${c.ir}" target="_blank">IR website →</a>
+     <button class="dlnk" onclick="showPage('comparison',document.querySelectorAll('.nb')[1]);closeDrw()">See comparison →</button>`;
+  document.getElementById('d-note').textContent = c.note||'Details pending.';
+  document.getElementById('dov').classList.add('open');
 }
-function closeDrawer(){document.getElementById('drawer-overlay').classList.remove('open');}
-function handleOverlayClick(e){if(e.target===document.getElementById('drawer-overlay'))closeDrawer();}
+function closeDrw(){ document.getElementById('dov').classList.remove('open'); }
+function handleDOvClick(e){ if(e.target===document.getElementById('dov')) closeDrw(); }
 
-// ════════════ COMPARISON ════════════
-function regionBars(ticker){
-  const pcts={DAL:[72,13,11,6],UAL:[68,14,10,8],AAL:[65,15,12,8],ALK:[90,0,6,4],LUV:[100,0,0,0]};
-  const colors=['#3266AD','#E07A2F','#2E9E5B','#9B59B6'];
-  const p=pcts[ticker]||[100,0,0,0];
-  return p.map((pct,i)=>pct>0?`<span title="${['Domestic','Atlantic','LatAm','Pacific'][i]} ~${pct}%" style="display:inline-block;width:${Math.max(pct*0.9,4)}px;height:14px;background:${colors[i]};border-radius:2px;margin-right:1px"></span>`:'').join('');
+// ══════════════════════════════════════
+// COMPARISON
+// ══════════════════════════════════════
+function buildQSel() {
+  const qs = document.getElementById('qsel');
+  qs.innerHTML = '';
+  Object.keys(QD).forEach(q => {
+    const btn = document.createElement('button');
+    btn.className = 'qbtn' + (q===activeCQ?' active':'');
+    btn.textContent = q;
+    btn.onclick = () => { activeCQ=q; buildQSel(); buildCompToggles(); buildCompTable(); };
+    qs.appendChild(btn);
+  });
 }
 
-function buildCompToggles(){
-  const cont=document.getElementById('comp-toggles');
-  cont.innerHTML='';
-  ['DAL','UAL','AAL','ALK','LUV'].forEach(t=>{
-    const on=activeComparisons.has(t);
-    const btn=document.createElement('button');
-    btn.className='carrier-toggle'+(on?' active':'');
-    btn.style.borderColor=on?CARRIERS[t].color:'';
-    btn.style.background=on?CARRIERS[t].color+'22':'';
-    btn.innerHTML=`<span class="tdot" style="background:${CARRIERS[t].color}"></span>${t} · ${CARRIERS[t].name}`;
-    btn.onclick=()=>{
-      if(activeComparisons.has(t))activeComparisons.delete(t);else activeComparisons.add(t);
-      buildCompToggles();buildCompTable();
+function availableTickers() {
+  return ['DAL','UAL','AAL','ALK','LUV','JBLU','ULCC'].filter(t => QD[activeCQ]?.[t]);
+}
+
+function buildCompToggles() {
+  const cont = document.getElementById('comp-toggles');
+  cont.innerHTML = '';
+  availableTickers().forEach(t => {
+    const on = activeComp.has(t);
+    const btn = document.createElement('button');
+    btn.className = 'tog'+(on?' on':'');
+    btn.style.borderColor = on ? C[t].color : '';
+    btn.style.background = on ? C[t].color+'22' : '';
+    btn.innerHTML = `<span class="tdot" style="background:${C[t].color}"></span>${t} · ${C[t].name}`;
+    btn.onclick = () => {
+      if(activeComp.has(t)) activeComp.delete(t); else activeComp.add(t);
+      buildCompToggles(); buildCompTable();
     };
     cont.appendChild(btn);
   });
 }
 
-function buildCompTable(){
-  buildCompToggles();
-  const tickers=['DAL','UAL','AAL','ALK','LUV'].filter(t=>activeComparisons.has(t));
-  const thead=document.getElementById('comp-thead');
-  const tbody=document.getElementById('comp-tbody');
-  thead.innerHTML=`<th style="padding:8px 12px;text-align:left;color:var(--text3);border-bottom:1px solid var(--border);background:var(--bg2);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em;position:sticky;left:0;z-index:3">Metric</th>`
-    +tickers.map(t=>{
-      const[sl,sc]=STATUS_MAP[COMP_DATA[t].status];
-      return`<th style="padding:8px 12px;text-align:left;color:var(--text3);border-bottom:1px solid var(--border);background:var(--bg2);white-space:nowrap;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em">
+function regionBars(ticker) {
+  const pcts = {DAL:[72,13,11,6],UAL:[68,14,10,8],AAL:[65,15,12,8],ALK:[90,0,6,4],LUV:[100,0,0,0],JBLU:[55,0,45,0],ULCC:[95,0,5,0]};
+  const colors = ['#3266AD','#E07A2F','#2E9E5B','#9B59B6'];
+  const p = pcts[ticker]||[100,0,0,0];
+  return p.map((pct,i)=>pct>0?`<span title="${['Domestic','Atlantic','LatAm','Pacific'][i]} ~${pct}%" style="display:inline-block;width:${Math.max(pct*0.85,4)}px;height:14px;background:${colors[i]};border-radius:2px;margin-right:1px;vertical-align:middle"></span>`:'').join('');
+}
+
+function compCell(v, isEst, section) {
+  if(v===undefined||v===null) return `<td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text3)">—</td>`;
+  const sv = String(v);
+  const cls = sv.startsWith('+')?' class="vpos"':sv.startsWith('-')&&sv.length<12&&!sv.includes('est')?' class="vneg"':'';
+  const estTag = isEst&&sv!=='—'&&!sv.includes('N/A') ? ' <span class="vest">est.</span>' : '';
+  return `<td style="padding:8px 12px;border-bottom:1px solid var(--border)"${cls}>${v}${estTag}</td>`;
+}
+
+function buildCompTable() {
+  const qdat = QD[activeCQ]||{};
+  const tickers = availableTickers().filter(t=>activeComp.has(t));
+
+  const thead = document.getElementById('comp-thead');
+  const tbody = document.getElementById('comp-tbody');
+
+  thead.innerHTML = `<th style="padding:8px 12px;text-align:left;color:var(--text3);border-bottom:1px solid var(--border);background:var(--bg2);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em;position:sticky;left:0;z-index:3">Metric · ${activeCQ}</th>`
+    + tickers.map(t => {
+      const [sl,sc] = SM[qdat[t]?.st||'tbd'];
+      return `<th style="padding:8px 12px;text-align:left;color:var(--text3);border-bottom:1px solid var(--border);background:var(--bg2);white-space:nowrap;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.04em">
         <div style="display:flex;align-items:center;gap:7px">
-          <div style="width:22px;height:22px;border-radius:4px;background:${CARRIERS[t].color};display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:500;font-family:'DM Mono',monospace;flex-shrink:0">${t}</div>
-          ${CARRIERS[t].name}<span class="status-badge ${sc}" style="font-size:10px;padding:1px 6px">${sl}</span>
+          <div style="width:22px;height:22px;border-radius:4px;background:${C[t].color};display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:500;font-family:'DM Mono',monospace;flex-shrink:0">${t}</div>
+          ${C[t].name} <span class="sb ${sc}" style="font-size:10px;padding:1px 6px">${sl}</span>
         </div></th>`;
     }).join('');
 
-  const sections=[
-    {group:'Headline',keys:[['headline','Adj. EPS'],['headline','EPS YoY'],['headline','Total revenue'],['headline','Revenue YoY'],['headline','Op. margin']]},
-    {group:'Unit economics',keys:[['unit','RASM'],['unit','CASM-ex'],['unit','Load factor'],['unit','Capacity YoY'],['unit','Fuel $/gal']]},
-    {group:'Revenue mix',keys:[['mix','Premium rev YoY'],['mix','Loyalty rev YoY']]},
-    {group:'Regional breakdown',special:'reg'},
+  const sections = [
+    {g:'Headline', sec:'headline'},
+    {g:'Unit economics', sec:'unit'},
+    {g:'Cost breakdown', sec:'costs'},
+    {g:'Revenue mix', sec:'mix'},
+    {g:'Regional revenue', special:'regional'},
   ];
 
-  let html='';
-  sections.forEach(sec=>{
-    html+=`<tr class="group-row"><td colspan="${tickers.length+1}">${sec.group}</td></tr>`;
-    if(sec.special==='reg'){
-      html+=`<tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);position:sticky;left:0;background:var(--bg);font-size:12px;color:var(--text2);font-family:'DM Mono',monospace">Rev mix</td>`
-        +tickers.map(t=>`<td style="padding:8px 12px;border-bottom:1px solid var(--border)">${regionBars(t)}</td>`).join('')+'</tr>';
-      ['Domestic','Atlantic','Latin America','Pacific'].forEach(region=>{
-        html+=`<tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);position:sticky;left:0;background:var(--bg);font-size:12px;color:var(--text2);font-family:'DM Mono',monospace">${region}</td>`
-          +tickers.map(t=>{
-            const rd=COMP_DATA[t].regional;
-            const match=Object.entries(rd).find(([k])=>k.toLowerCase().includes(region.toLowerCase().split(' ')[0]));
-            if(!match)return`<td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text3)">—</td>`;
-            const[,v]=match;
-            const isEst=COMP_DATA[t].status==='sch';
-            const uyc=v.unitRevYoy?.startsWith('+')?' style="color:var(--success)"':v.unitRevYoy?.startsWith('-')?' style="color:var(--danger)"':' style="color:var(--text3)"';
-            return`<td style="padding:8px 12px;border-bottom:1px solid var(--border)">
-              <div style="font-size:13px;color:var(--text)">${v.rev}${isEst&&v.rev!=='N/A'?' <span class="val-est">est.</span>':''}</div>
-              <div${uyc} style="font-size:11px;margin-top:2px">Unit rev: ${v.unitRevYoy||'—'} · Cap: ${v.capYoy||'—'}</div></td>`;
+  let html = '';
+  sections.forEach(s => {
+    html += `<tr class="grp"><td colspan="${tickers.length+1}">${s.g}</td></tr>`;
+
+    if(s.special==='regional') {
+      // visual bars row
+      html += `<tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);position:sticky;left:0;background:var(--bg);font-size:12px;color:var(--text2);font-family:'DM Mono',monospace">Rev mix</td>`
+        + tickers.map(t=>`<td style="padding:8px 12px;border-bottom:1px solid var(--border)">${regionBars(t)}</td>`).join('')+'</tr>';
+
+      const allRegions = new Set();
+      tickers.forEach(t => { if(qdat[t]?.regional) Object.keys(qdat[t].regional).forEach(r=>allRegions.add(r)); });
+
+      allRegions.forEach(region => {
+        html += `<tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);position:sticky;left:0;background:var(--bg);font-size:12px;color:var(--text2);font-family:'DM Mono',monospace">${region}</td>`
+          + tickers.map(t => {
+            const rd = qdat[t]?.regional||{};
+            const match = rd[region];
+            if(!match) return `<td style="padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text3)">—</td>`;
+            const isEst = qdat[t]?.st==='sch';
+            const uyc = match.ury?.startsWith('+')?'color:var(--success)':match.ury?.startsWith('-')?'color:var(--danger)':'color:var(--text3)';
+            return `<td style="padding:8px 12px;border-bottom:1px solid var(--border)">
+              <div style="font-size:13px;color:var(--text)">${match.rev}${isEst&&match.rev!=='N/A'?' <span class="vest">est.</span>':''}</div>
+              <div style="font-size:11px;${uyc};margin-top:1px">Unit rev: ${match.ury||'—'} · Cap: ${match.cap||'—'}</div></td>`;
           }).join('')+'</tr>';
       });
-      html+=`<tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);position:sticky;left:0;background:var(--bg);font-size:12px;color:var(--text2);font-family:'DM Mono',monospace">Other/loyalty</td>`
-        +tickers.map(t=>`<td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text2);white-space:normal;max-width:180px;line-height:1.4">${COMP_DATA[t].other}</td>`).join('')+'</tr>';
-      html+=`<tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);position:sticky;left:0;background:var(--bg);font-size:12px;color:var(--text2);font-family:'DM Mono',monospace">Notes</td>`
-        +tickers.map(t=>`<td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text2);white-space:normal;max-width:200px;line-height:1.4">${COMP_DATA[t].note}</td>`).join('')+'</tr>';
+
+      // other & notes
+      html += `<tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);position:sticky;left:0;background:var(--bg);font-size:12px;color:var(--text2);font-family:'DM Mono',monospace">Other/loyalty</td>`
+        + tickers.map(t=>`<td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text2);white-space:normal;max-width:180px;line-height:1.4">${qdat[t]?.other||'—'}</td>`).join('')+'</tr>';
+      html += `<tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);position:sticky;left:0;background:var(--bg);font-size:12px;color:var(--text2);font-family:'DM Mono',monospace">Notes</td>`
+        + tickers.map(t=>`<td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text2);white-space:normal;max-width:200px;line-height:1.4">${qdat[t]?.note||'—'}</td>`).join('')+'</tr>';
       return;
     }
-    sec.keys.forEach(([section,key])=>{
-      const vals=tickers.map(t=>{
-        const v=COMP_DATA[t][section][key]||'—';
-        const isEst=COMP_DATA[t].status==='sch'&&v!=='—';
-        const cls=String(v).startsWith('+')?' class="val-pos"':(String(v).startsWith('-')&&String(v).length<10&&!String(v).includes('est'))?' class="val-neg"':'';
-        return`<td style="padding:8px 12px;border-bottom:1px solid var(--border)"${cls}>${v}${isEst?' <span class="val-est">est.</span>':''}</td>`;
-      }).join('');
-      html+=`<tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);position:sticky;left:0;background:var(--bg);font-size:12px;color:var(--text2);font-family:'DM Mono',monospace">${key}</td>${vals}</tr>`;
+
+    const keys = Object.keys(tickers.reduce((acc,t)=>({...acc,...(qdat[t]?.[s.sec]||{})}),{}));
+    keys.forEach(key => {
+      html += `<tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);position:sticky;left:0;background:var(--bg);font-size:12px;color:var(--text2);font-family:'DM Mono',monospace">${key}</td>`
+        + tickers.map(t => {
+          const v = qdat[t]?.[s.sec]?.[key];
+          const isEst = qdat[t]?.st==='sch';
+          return compCell(v, isEst, s.sec);
+        }).join('')+'</tr>';
     });
   });
-  tbody.innerHTML=html;
+
+  tbody.innerHTML = html;
 }
 
-// ════════════ TRENDS ════════════
-function makeDatasets(metric){
-  return Object.keys(TREND_COLORS).map(t=>({
-    label:CARRIERS[t].name,
-    data:TREND_DATA[t][metric],
-    borderColor:TREND_COLORS[t],
-    backgroundColor:TREND_COLORS[t]+'18',
-    borderWidth:2,pointRadius:4,pointBackgroundColor:TREND_COLORS[t],
-    spanGaps:true,
-    segment:{borderDash:ctx=>ctx.p1.parsed.y===null?[5,3]:undefined}
+// ══════════════════════════════════════
+// TRENDS
+// ══════════════════════════════════════
+function buildMetricSel() {
+  const cont = document.getElementById('metric-sel');
+  if(cont.children.length) return;
+  Object.keys(MMETA).forEach(m => {
+    const btn = document.createElement('button');
+    btn.className = 'mbtn'+(m===activeMet?' active':'');
+    btn.textContent = MMETA[m].label;
+    btn.onclick = () => {
+      activeMet = m;
+      document.querySelectorAll('.mbtn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tr-title').textContent = MMETA[m].label;
+      document.getElementById('tr-sub').textContent = MMETA[m].sub;
+      buildMainChart();
+      buildMiniCharts();
+    };
+    cont.appendChild(btn);
+  });
+}
+
+function buildTrendToggles() {
+  const cont = document.getElementById('trend-toggles');
+  cont.innerHTML = '';
+  Object.keys(TCOLORS).forEach(t => {
+    const on = activeTrend.has(t);
+    const btn = document.createElement('button');
+    btn.className = 'tog'+(on?' on':'');
+    btn.style.borderColor = on ? TCOLORS[t] : '';
+    btn.style.background = on ? TCOLORS[t]+'22' : '';
+    btn.innerHTML = `<span class="tdot" style="background:${TCOLORS[t]}"></span>${t} · ${C[t]?.name||t}`;
+    btn.onclick = () => {
+      if(activeTrend.has(t)) activeTrend.delete(t); else activeTrend.add(t);
+      buildTrendToggles(); buildMainChart(); buildMiniCharts();
+    };
+    cont.appendChild(btn);
+  });
+}
+
+function makeDSets() {
+  return [...activeTrend].map(t=>({
+    label: C[t]?.name||t,
+    data: TD[t]?.[activeMet]||[],
+    borderColor: TCOLORS[t],
+    backgroundColor: TCOLORS[t]+'18',
+    borderWidth: 2, pointRadius: 4,
+    pointBackgroundColor: TCOLORS[t],
+    spanGaps: true,
+    segment:{ borderDash: ctx => ctx.p1.parsed.y===null?[5,3]:undefined }
   }));
 }
 
-function buildMainChart(metric){
-  const ex=Chart.getChart('mainTrendChart');
-  if(ex)ex.destroy();
-  const meta=METRIC_META[metric];
-  new Chart(document.getElementById('mainTrendChart'),{
-    type:'line',
-    data:{labels:TREND_DATA.labels,datasets:makeDatasets(metric)},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false}},
-      scales:{
-        x:{ticks:{color:'#555a6b',font:{size:11,family:"'DM Mono',monospace"}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.07)'}},
-        y:{ticks:{color:'#555a6b',font:{size:11,family:"'DM Mono',monospace"},callback:v=>meta.fmt(v)},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.07)'}}
-      }
-    }
+const CHART_OPTS = () => ({
+  responsive:true, maintainAspectRatio:false,
+  plugins:{ legend:{display:false} },
+  scales:{
+    x:{ ticks:{color:'#555a6b',font:{size:11,family:"'DM Mono',monospace"}}, grid:{color:'rgba(255,255,255,0.04)'}, border:{color:'rgba(255,255,255,0.07)'} },
+    y:{ ticks:{color:'#555a6b',font:{size:11,family:"'DM Mono',monospace"}, callback:v=>MMETA[activeMet].fmt(v)}, grid:{color:'rgba(255,255,255,0.04)'}, border:{color:'rgba(255,255,255,0.07)'} }
+  }
+});
+
+function buildMainChart() {
+  const ex = Chart.getChart('mainChart');
+  if(ex) ex.destroy();
+  // legend
+  document.getElementById('tr-legend').innerHTML = [...activeTrend].map(t=>
+    `<div class="cli"><div class="cls" style="background:${TCOLORS[t]}"></div>${C[t]?.name||t}</div>`
+  ).join('');
+  new Chart(document.getElementById('mainChart'),{
+    type:'line', data:{labels:QLABELS, datasets:makeDSets()}, options:CHART_OPTS()
   });
 }
 
-function buildMiniCharts(metric){
-  const grid=document.getElementById('mini-charts-grid');
-  grid.innerHTML='';
-  const meta=METRIC_META[metric];
-  Object.keys(TREND_COLORS).forEach(t=>{
-    const id='mini-'+t;
-    const div=document.createElement('div');
-    div.className='chart-wrap';
-    div.innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-      <div style="width:24px;height:24px;border-radius:5px;background:${CARRIERS[t].color};display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:500;font-family:'DM Mono',monospace">${t}</div>
-      <div style="font-family:'Fraunces',serif;font-size:14px;font-weight:300;color:var(--text)">${CARRIERS[t].name}</div>
-    </div><div style="position:relative;height:140px"><canvas id="${id}" role="img" aria-label="${CARRIERS[t].name} trend">${CARRIERS[t].name} data.</canvas></div>`;
+function buildMiniCharts() {
+  const grid = document.getElementById('mini-grid');
+  grid.innerHTML = '';
+  [...activeTrend].forEach(t => {
+    const id = 'mc-'+t;
+    const div = document.createElement('div');
+    div.className = 'cw';
+    div.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <div style="width:24px;height:24px;border-radius:5px;background:${C[t]?.color||TCOLORS[t]};display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:500;font-family:'DM Mono',monospace">${t}</div>
+      <div style="font-family:'Fraunces',serif;font-size:14px;font-weight:300">${C[t]?.name||t}</div>
+    </div><div style="position:relative;height:130px"><canvas id="${id}" role="img" aria-label="${C[t]?.name||t} trend">${C[t]?.name||t} data.</canvas></div>`;
     grid.appendChild(div);
-    const exm=Chart.getChart(id);
-    if(exm)exm.destroy();
+
+    const ex = Chart.getChart(id);
+    if(ex) ex.destroy();
+    const data = TD[t]?.[activeMet]||[];
     new Chart(document.getElementById(id),{
       type:'bar',
-      data:{labels:TREND_DATA.labels,datasets:[{
-        data:TREND_DATA[t][metric],
-        backgroundColor:TREND_DATA[t][metric].map((v,i)=>v===null?'rgba(255,255,255,0.06)':i===TREND_DATA[t][metric].filter(x=>x!==null).length-1?TREND_COLORS[t]:TREND_COLORS[t]+'70'),
-        borderRadius:4,borderSkipped:false,
+      data:{labels:QLABELS, datasets:[{
+        data,
+        backgroundColor: data.map((v,i)=>v===null?'rgba(255,255,255,0.06)':i===data.filter(x=>x!==null).length-1?TCOLORS[t]:TCOLORS[t]+'70'),
+        borderRadius:4, borderSkipped:false,
       }]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>meta.fmt(ctx.parsed.y)}}},
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=>ctx.parsed.y!==null?MMETA[activeMet].fmt(ctx.parsed.y):'est.'}}},
         scales:{
           x:{ticks:{color:'#555a6b',font:{size:10,family:"'DM Mono',monospace"}},grid:{display:false},border:{color:'rgba(255,255,255,0.07)'}},
-          y:{ticks:{color:'#555a6b',font:{size:10,family:"'DM Mono',monospace"},callback:v=>meta.fmt(v)},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.07)'}}
+          y:{ticks:{color:'#555a6b',font:{size:10,family:"'DM Mono',monospace"},callback:v=>MMETA[activeMet].fmt(v)},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'rgba(255,255,255,0.07)'}}
         }
       }
     });
   });
 }
 
-function buildTrendLegend(){
-  document.getElementById('trend-legend').innerHTML=Object.keys(TREND_COLORS).map(t=>
-    `<div class="cl-item"><div class="cl-swatch" style="background:${TREND_COLORS[t]}"></div>${CARRIERS[t].name}</div>`
-  ).join('');
+function buildTrends() {
+  buildMainChart();
+  buildMiniCharts();
 }
 
-function setMetric(metric,btn){
-  currentMetric=metric;
-  document.querySelectorAll('.metric-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('trend-title').textContent=METRIC_META[metric].label;
-  document.getElementById('trend-sub').textContent=METRIC_META[metric].sub;
-  buildMainChart(metric);
-  buildMiniCharts(metric);
-}
-
-function buildTrends(){
-  buildTrendLegend();
-  buildMainChart(currentMetric);
-  buildMiniCharts(currentMetric);
-}
-
-// ════════════ INIT ════════════
-buildCalTable();
-buildCompToggles();
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+buildCal();
 </script>
 </body>
 </html>
